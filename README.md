@@ -2,7 +2,7 @@
 
 ## Installation and Setup
 
-### Files Needed To Download & setup
+## Files Needed To Download & setup
 
 - Composer
   ```bash
@@ -15,7 +15,7 @@
    https://github.com/picqer/php-barcode-generator
 
 
-### Bootstrap and Sass
+## Bootstrap and Sass
 
 1. **Install Bootstrap:**
 
@@ -23,14 +23,14 @@
    npm install bootstrap
 2. **Setup Sass:**
 
-Create a `scss` directory and a `main.scss` file inside it.
+    Create a `scss` directory and a `main.scss` file inside it.
 
 3. **Import Bootstrap in `main.scss`:**
 
-   ```scss
-@import "../node_modules/bootstrap/scss/bootstrap";
+   ```bash
+    @import "../node_modules/bootstrap/scss/bootstrap";
 
-3. **Compile Sass to CSS::**
+3. **Compile Sass to CSS:**
 
    ```Install sass globally if not already installed:
    npm install -g sass
