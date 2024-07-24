@@ -17,6 +17,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.css">
+    <!-- <style>*{border:1px solid red;}</style> -->
 </head>
 
 <body>
@@ -29,23 +30,46 @@
                     <span class="fs-5">A S ENTERPRISE</span>
                 </a>
                 <hr>
-                <ul class="nav nav-pills flex-column mb-auto" id="menu">
+                <ul class="nav nav-pills mb-auto d-flex flex-column list-unstyled ps-0">
                     <li class="nav-item">
-                        <a href="./sell.php" class="nav-link active d-flex align-items-center my-3  p-2 text-light"
+                        <a href="./sell.php" class="active nav-link d-flex align-items-center my-1  p-2 text-light"
                             aria-current="page"><i
                                 class="bg-dark fa-solid fa-file-invoice-dollar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
-                                style=" height: 30px;width:30px"></i> SELL</a>
+                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">SELL</span></a>
                     </li>
                     <li>
-                        <a href="./add.php" class="nav-link d-flex align-items-center my-3  p-2 text-light"><i
-                                class="fa-solid fa-cart-plus me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
-                                style=" height: 30px;width:30px"></i> ADD PRODUCTS</a>
+                        <a href="./add.php" class="nav-link d-flex align-items-center my-1  p-2 text-light"><i
+                                class=" fa-solid fa-truck-ramp-box me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
+                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">ADD PRODUCTS</span></a>
                     </li>
                     <li>
-                        <a href="./details.php" class="nav-link d-flex align-items-center my-3  p-2 text-light"><i
-                                class="fa-solid fa-file-lines me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
-                                style=" height: 30px;width:30px"></i> SELL DETAILS</a>
+                        <a href="./purchase.php" class="nav-link d-flex align-items-center my-1  p-2 text-light"><i
+                                class="fa-solid fa-cart-shopping me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
+                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">ADD Purchase</span></a>
                     </li>
+                    <li>
+                        <a href="./items.php" class="nav-link d-flex align-items-center my-1  p-2 text-light"><i
+                                class=" fa-solid fa-shapes me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
+                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">Items</span></a>
+                    </li>
+                    <li>
+                        <a href="./parties.php" class="nav-link d-flex align-items-center my-1  p-2 text-light"><i
+                                class=" fa-solid fa-people-group me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
+                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">Parties</span></a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link d-flex align-items-center my-1  p-2 text-light" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="false"><i
+                                class="fa-solid fa-plus me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
+                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">Reports</span></a>
+                        <div class="collapse" id="home-collapse" style="">
+                        <ul class="btn-toggle-nav list-unstyled fw-normal ms-5 pb-1 small">
+                            <li><a href="./sellReport.php" class="fs-7 nav-link d-flex align-items-center p-2 text-light"><i class="fa-solid fa-chart-bar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center" style=" height: 20px;width:20px"></i> <span class="d-none d-lg-block">Sell Report</span></a></li>
+                            <li><a href="./purchaseReport.php" class="fs-7 nav-link d-flex align-items-center p-2 text-light"><i class="fa-solid fa-chart-bar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center" style=" height: 20px;width:20px"></i> <span class="d-none d-lg-block">Purchase Report</span></a></li>
+                            <li><a href="./gstReport.php" class="fs-7 nav-link d-flex align-items-center p-2 text-light"><i class="fa-solid fa-chart-bar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center" style=" height: 20px;width:20px"></i> <span class="d-none d-lg-block">GST Report</span></a></li>
+                        </ul>
+                        </div>
+                    </li>
+
                 </ul>
                 <hr>
                 <div class="dropdown">
@@ -62,7 +86,7 @@
             </div>
         </main>
         <div class="col d-flex flex-column">
-        <nav class="navbar navbar-expand-lg bg-secondary align-self-stretch">
+            <nav class="navbar navbar-expand-lg bg-secondary align-self-stretch">
                 <div class="container-fluid">
                     <a class="navbar-brand d-flex align-items-center justify-content-center" style="height:50px; width:50px; text-align:center;padding:0;" href="#">
                         <?php 
@@ -96,29 +120,37 @@
                     </div>
                 </div>
             </nav>
-            <div class="container d-flex justify-content-center align-items-center flex-grow-1 text-center"
+            <div class="container-fluid d-flex justify-content-center align-items-center flex-grow-1 text-center"
                 id="chnageSection">
                 <!--Enter your code here for sell  -->
-                <div class="container  p-0">
-                    <form action="./backend/sellBack.php" method="POST" id="sell_form" class="row" style="width: 100%;">
-                        <div class="col">
-                            <!-- <div class="mb-4">
-                                <input type="text" class="form-control border border-primary border-2 text-custom"
-                                       required name="barcode" placeholder="Barcode Number" aria-label="Barcode Number">
-                            </div> -->
-                            <div class="input-group mb-4">
-                                <input type="text" class="form-control border border-primary border-2 text-custom"
-                                     name="barcode" id="barcode_input" placeholder="Barcode Number"
-                                    aria-label="Barcode Number" aria-describedby="button-addon2">
+                <div class="container p-2 d-flex justify-content-center align-items-center">
+                    <form action="./backend/sellBack.php" method="POST" id="sell_form" class="row justify-content-center" style="width: 100%;">
+                        <div class="row">
+                            <div class="col input-group mb-2">
+                                <select  id="category_select" class="col form-select border-primary border-2" aria-label="Default select example">
+                                    <option selected>Select Category.......</option>
+                                    <option>ADD CATAGORY</option>
+                                    <option value="Battery">Battery</option>
+                                    <option value="E Rickshaw with Battery">E Rickshaw with Battery</option>
+                                </select>
+                            </div>
+                            <div class="col input-group mb-2">
+                                <!-- <input type="text" class="form-control border border-primary border-2 text-custom"
+                                     name="category" id="category_input" placeholder="Goods"
+                                    aria-label="category Number" aria-describedby="button-addon2"> -->
+                                <select class="col form-select border-primary border-2" name="category" id="category_input" aria-label="Default select example">
+                                    <option selected>Goods Name</option>
+                                </select>
                                 <button class="btn btn-outline-primary border-2" type="button" id="button_addgoodsDetails">ADD</button>
                             </div>
-                            <div class="mb-4 overflow-auto" style="height:250px;">
+                            <div class="mb-2 overflow-auto" style="height:200px;">
                                 <table class="table table-striped" id="goods_table">
                                     <thead>
                                         <tr>
                                             <th scope="col">Sr</th>
-                                            <th scope="col">Barcode</th>
+                                            <th scope="col">Category</th>
                                             <th scope="col">Name</th>
+                                            <th scope="col">Description</th>
                                             <th scope="col">Amount</th>
                                             <th scope="col">GST</th>
                                             <th scope="col">Quantity</th>
@@ -133,22 +165,70 @@
                                 <strong>Grand Total:</strong> <span id="grand_total">0.00</span>
                             </div>
                         </div>
-                        <div class="col">
-                            <div class="mb-4">
-                                <input type="text" class="form-control border border-primary border-2 text-custom"
-                                    required id="buyer_name" placeholder="Buyer Name" aria-label="Buyer Name">
+                        <div class="row row-cols-4">
+                            <div class="col mb-2">
+                                <?php 
+                                    $sql = "SELECT id, partiesName, gstin, phoneNumber, billingAddress, shippingAddress, stateCode  FROM parties";
+                                    // Execute the query
+                                    $result = $conn->query($sql);
+                                    // Initialize an empty array to hold options
+                                    $options = '';
+                                    // Check if there are results
+                                    if ($result) {
+                                        // Fetch results and generate options
+                                        while ($row = $result->fetch_assoc()) {
+                                            $id = $row['id'];
+                                            $name = $row['partiesName'];
+                                            $gst = $row['gstin'];
+                                            $contactNo = $row['phoneNumber'];
+                                            $billAdd = $row['billingAddress'];
+                                            $shipAdd = $row['shippingAddress'];
+                                            $stateCode = $row['stateCode'];
+                                            $options .= "<option value=\"$id\" data-name=\"$name\" data-gst=\"$gst\" data-contact=\"$contactNo\" data-billadd=\"$billAdd\" data-shipadd=\"$shipAdd\" data-statecode=\"$stateCode\">$name</option>";
+                                        }
+                                    } else {echo "Error: " . $conn->error;}
+                                ?>
+                                <select class="form-select border-primary border-2" id="buyer_details" aria-label="Default select example">
+                                    <option selected>Buyer Details</option>
+                                    <?php echo $options; ?>
+                                </select>
                             </div>
-                            <div class="mb-4">
-                                <input type="text" class="form-control border border-primary border-2 text-custom"
-                                    required id="buyer_address" placeholder="Buyer Address"
-                                    aria-label="Buyer Address">
+                            <input type="hidden" id="buyer_name" placeholder="Name">
+                            <input type="hidden" id="gst_field" placeholder="GST">
+                            <input type="hidden" id="contact_number" placeholder="Contact No">
+                            <input type="hidden" id="billing_field" placeholder="Billing Address">
+                            <input type="hidden" id="shipadd_field" placeholder="Shipping Address">
+                            <input type="hidden" id="state" placeholder="State Code">
+                            <script>
+                                // Function to handle the selection change
+                                document.getElementById('buyer_details').addEventListener('change', function() {
+                                    var selectedOption = this.options[this.selectedIndex];
+                                    // Extract values from data attributes
+                                    var name = selectedOption.getAttribute('data-name');
+                                    var gst = selectedOption.getAttribute('data-gst');
+                                    var contact = selectedOption.getAttribute('data-contact');
+                                    var billAdd = selectedOption.getAttribute('data-billadd');
+                                    var shipAdd = selectedOption.getAttribute('data-shipadd');
+                                    var stateCode = selectedOption.getAttribute('data-statecode');
+                                    
+                                    // Update input fields with selected values
+                                    document.getElementById('buyer_name').value = name;
+                                    document.getElementById('gst_field').value = gst;
+                                    document.getElementById('contact_number').value = contact;
+                                    document.getElementById('billing_field').value = billAdd;
+                                    document.getElementById('shipadd_field').value = shipAdd;
+                                    document.getElementById('state').value = stateCode;
+                                });
+                            </script>
+                            <div class="col mb-2">
+                                <select class="form-select border-primary border-2" id="paymentMethod2" aria-label="Default select example">
+                                    <option selected value="">Payment Method</option>
+                                    <option value="Cash">Cash</option>
+                                    <option value="Cheque">Cheque</option>
+                                    <option value="Account">Account</option>
+                                </select>
                             </div>
-                            <div class="mb-4">
-                                <input type="text" class="form-control border border-primary border-2 text-custom"
-                                    required id="contact_number" placeholder="Contact Number"
-                                    aria-label="Contact Number">
-                            </div>
-                            <div class="mb-4">
+                            <!-- <div class="colmb-4">
                                 <select class="form-select border-primary border-2" required id="state"
                                     id="inputGroupSelect02">
                                     <option selected disabled>State Name , Code</option>
@@ -193,25 +273,99 @@
                                     <option value="Andhra Pradesh (New) - 37">Andhra Pradesh (New) - 37</option>
                                     <option value="Ladakh - 38">Ladakh - 38</option>
                                 </select>
-                            </div>
-                            <div class="mb-4">
+                            </div> -->
+                            <div class="col mb-2">
                                 <input type="text" class="form-control border border-primary border-2 text-custom"
-                                    required id="discount" placeholder="Discount" aria-label="Discount">
+                                    id="discount" placeholder="Discount" aria-label="Discount">
                             </div>
-                            <div class="mb-4">
+                            <div class="col mb-2">
                                 <input type="text" class="form-control border border-primary border-2 text-custom"
                                 required id="invoice_maker" placeholder="Invoice Maker Name" aria-label="Invoice Maker Name">
                             </div>
-                            <div class="col">
-                                <button type="submit" style="width:100%;" id="sell_submit" name="sell_submit"class="btn-block col btn btn-primary fs-5 rounded-5">SELL
-                                    SUBMIT</button>
+                            <div class="col-12">
+                                <div class="row row-cols-5 justify-content-start">
+                                    <div class="col mb-2">
+                                        <input type="text" class="form-control border border-primary border-2 text-custom"
+                                            id="delNoDate" placeholder="Delivery No. & Date"
+                                            aria-label="delNoDate">
+                                    </div>
+                                    <div class="col mb-2">
+                                        <input type="text" class="form-control border border-primary border-2 text-custom"
+                                            id="refNoDate" placeholder="Reference No & Date"
+                                            aria-label="refNoDate">
+                                    </div>
+                                    <div class="col mb-2">
+                                        <input type="text" class="form-control border border-primary border-2 text-custom"
+                                            id="othRef" placeholder="Other References"
+                                            aria-label="othRef">
+                                    </div>
+                                    <div class="col mb-2">
+                                        <input type="text" class="form-control border border-primary border-2 text-custom"
+                                            id="buyOdrNo" placeholder="Buyer's Order No."
+                                            aria-label="buyOdrNo">
+                                    </div>
+                                    <div class="col mb-2">
+                                        <input type="date" class="form-control border border-primary border-2 text-custom"
+                                            id="dated" placeholder="Dated"
+                                            aria-label="Contact">
+                                    </div>
+                                    <div class="col mb-2">
+                                        <input type="text" class="form-control border border-primary border-2 text-custom"
+                                            id="disDocNo" placeholder="Dispatch Doc No."
+                                            aria-label="disDocNo">
+                                    </div>
+                                    <div class="col mb-2">
+                                        <input type="text" class="form-control border border-primary border-2 text-custom"
+                                            id="delNoteDate" placeholder="Delivery Note Date"
+                                            aria-label="delNoteDate">
+                                    </div>
+                                    <div class="col mb-2">
+                                        <input type="text" class="form-control border border-primary border-2 text-custom"
+                                            id="hyp" placeholder="HYPOTHICATION"
+                                            aria-label="hyp">
+                                    </div>
+                                    <div class="col mb-2">
+                                        <input type="text" class="form-control border border-primary border-2 text-custom"
+                                            id="des" placeholder="Destination"
+                                            aria-label="des">
+                                    </div>
+                                    <div class="col mb-2">
+                                        <input type="text" class="form-control border border-primary border-2 text-custom"
+                                            id="terOfDel" placeholder="Terms Of Delivery"
+                                            aria-label="terOfDel">
+                                    </div>
+                                    <div class="col-3 mb-2">
+                                        <input type="text" class="form-control border border-primary border-2 text-custom"
+                                            id="extChaName" placeholder="Extra Charges Name"
+                                            aria-label="extChaName">
+                                    </div>
+                                    <div class="col-3 mb-2">
+                                        <input type="text" class="form-control border border-primary border-2 text-custom"
+                                            id="chaAmount" placeholder="Charged Amount"
+                                            aria-label="chaAmount">
+                                    </div>
+                                    <div class="col-3 mb-2">
+                                        <div class="input-group mb-3">
+                                        <div class="input-group-text border border-primary border-2">
+                                            <input id="toggle-checkbox" class="form-check-input mt-0 border border-primary border-2" type="checkbox" aria-label="Checkbox for following text input">
+                                        </div>
+                                        <input id="toggle-input" type="text" class="form-control border border-primary border-2 text-custom disabled-input" placeholder="Received Amount" aria-label="Text input with checkbox" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <button type="submit" style="width:100%;" id="sell_submit" name="sell_submit"class="btn-block col btn btn-primary fs-5 rounded-5">SELL
+                                            SUBMIT</button>
+                                    </div>
+                                </div>
                             </div>
+
+
                         </div>
-                        <p class="fw-normal fs-9 text-center p-3">Please ensure that all goods details and buyer details
+                        <!-- <p class="fw-normal fs-9 text-center p-3">Please ensure that all goods details and buyer details
                             are filled out
                             correctly. Incomplete or inaccurate information may result in delays, penalties, or the
                             rejection of your tax invoice. Double-check all entries to avoid any discrepancies and
-                            ensure smooth processing.</p>
+                            ensure smooth processing.</p> -->
                     </form>
                 </div>
                 <!-- Modal -->
@@ -263,18 +417,71 @@
     <!-- <script src="main.js"></script> -->
     <script>
         $(document).ready(function() {
+            $('#toggle-checkbox').on('change', function() {
+                var isChecked = $(this).is(':checked');
+                $('#toggle-input').prop('disabled', !isChecked);
+                $('#toggle-input').toggleClass('disabled-input', !isChecked);
+            });
             var srCounter = 0; // Initialize the serial number counter
-            var grandTotal = 0; // Initialize the grand total
-            var barcodesToSend = []; // Array to store barcodes to be sent to sell.php
-        
-            function updateGrandTotal(amount) {
-                grandTotal += amount;
+            var categorysToSend = []; // Array to store categorys to be sent to sell.php
+
+            function updateGrandTotal() {
+                let grandTotal = 0;
+                $("#goods_table tbody tr").each(function() {
+                    let amount = parseFloat($(this).find('input[name="itemAmount"]').val()) || 0;
+                    let quantity = parseInt($(this).find('input[name="itemQty"]').val()) || 0;
+                    grandTotal += amount * quantity;
+                });
                 $("#grand_total").text(grandTotal.toFixed(2));
             }
-        
+            window.updateField = function(element, field) {
+                const targetId = $(element).data('id');
+                const newValue = $(element).val();
+                updateJsonData(targetId, field, newValue);
+            };
+
+            function updateJsonData(id, field, value) {
+                const index = categorysToSend.findIndex(item => item.id === id.toString());
+
+                if (index !== -1) {
+                    categorysToSend[index][field] = value;
+                    // console.log(`Updated ${field} for ID ${id} at index ${index}: ${categorysToSend[index][field]}`);
+                    // console.log(categorysToSend);
+                } else {
+                    console.log(`ID ${id} not found in the array.`);
+                }
+            }
+            $("#category_select").change(function() {
+                var selectedCategory = $(this).val();
+
+                $.ajax({
+                    url: "backend/get_goods_info.php",
+                    method: "POST",
+                    data: { category: selectedCategory },
+                    success: function(data) {
+                        var parsedData = JSON.parse(data);
+                        var categoryInput = $("#category_input");
+                        categoryInput.empty(); // Clear existing options
+
+                        if (parsedData.length > 0) {
+                            parsedData.forEach(function(item) {
+                                var option = $("<option></option>")
+                                    .attr("value", item.name)
+                                    .text(item.name);
+                                categoryInput.append(option);
+                            });
+                        } else {
+                            categoryInput.append(new Option("No Goods Found", ""));
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error("Error fetching goods info: ", textStatus, errorThrown);
+                    }
+                });
+            });
+
             $("#button_addgoodsDetails").click(function() {
-                var input = $("#barcode_input").val().trim();
-                // Ensure the input is not empty
+                var input = $("#category_input").val().trim();
                 if (input != "") {
                     $.ajax({
                         url: "backend/get_goods_info.php",
@@ -284,121 +491,167 @@
                             var parsedData = JSON.parse(data);
                             if (parsedData.length > 0) {
                                 parsedData.forEach(function(item) {
-                                    var existingRow = $("#goods_table tbody tr[data-barcode='" + item.barcode + "']");
+                                    var existingRow = $("#goods_table tbody tr[data-category='" + item.category + "']");
                                     if (existingRow.length && existingRow.find('td:eq(2)').text().trim() === item.name.trim()) {
-                                        // Update existing row if name matches
-                                        var currentQuantity = parseInt(existingRow.find('.quantity').text());
+                                        var currentQuantity = parseInt(existingRow.find('input[name="itemQty"]').val()) || 0;
                                         var newQuantity = currentQuantity + parseInt(item.quantity);
-                                        var newAmount = newQuantity * parseFloat(item.amount_per_unit);
-            
-                                        existingRow.find('.quantity').text(newQuantity);
-                                        existingRow.find('.amount').text(newAmount.toFixed(2));
-            
-                                        var amountDiff = newAmount - (currentQuantity * parseFloat(item.amount_per_unit));
-                                        updateGrandTotal(amountDiff);
-            
-                                        // Update the corresponding item in barcodesToSend array
-                                        var barcodeToSend = barcodesToSend.find(b => b.barcode === item.barcode && b.name === item.name);
-                                        if (barcodeToSend) {
-                                            barcodeToSend.quantity = newQuantity;
-                                            //barcodeToSend.amount_per_unit = newAmount; // Update amount correctly
+                                        var newAmount = newQuantity * parseFloat(item.amount);
+
+                                        existingRow.find('input[name="itemQty"]').val(newQuantity);
+                                        existingRow.find('input[name="itemAmount"]').val(newAmount.toFixed(2));
+
+                                        updateGrandTotal();
+
+                                        var categoryToSend = categorysToSend.find(b => b.category === item.category && b.name === item.name);
+                                        if (categoryToSend) {
+                                            categoryToSend.quantity = newQuantity;
                                         }
                                     } else {
-                                        // Increment the serial number counter
                                         srCounter++;
-            
-                                        // Append new row
                                         $("#goods_table tbody").append(`
-                                            <tr data-barcode="${item.barcode}">
-                                                <td>${srCounter}</td> <!-- Serial number -->
-                                                <td>${item.barcode}</td>
-                                                <td>${item.name}</td>
-                                                <td class="amount">${item.amount}</td>
-                                                <td>${item.gst}%</td>
-                                                <td class="quantity">${item.quantity}</td>
+                                            <tr data-id="${item.id}">
+                                                <td>${srCounter++}</td>
+                                                <td><input style="width:100px;" type="text" name="itemCat" value="${item.category}"></td>
+                                                <td><input style="width:300px;" type="text" name="itemName" value="${item.name}"></td>
+                                                <td><textarea style="width:auto; min-height:30px;height: 30px;" name="itemDesc" data-id="${item.id}" placeholder="Description" onchange="updateField(this, 'description')">${item.description}</textarea></td>
+                                                <td class="amount"><input style="width:100px;" type="text" name="itemAmount" value="${item.amount_per_unit}"></td>
+                                                <td><input style="width:50px;" type="text" name="itemGst" value="${item.gst}"></td>
+                                                <td class="quantity"><input style="width:50px;" type="text" name="itemQty" data-id="${item.id}" value="${item.quantity}" onchange="updateField(this, 'quantity')"></td>
                                             </tr>
+                                            
                                         `);
-            
-                                        updateGrandTotal(parseFloat(item.amount) * parseInt(item.quantity));
-            
-                                        // Add new barcode to barcodesToSend array
-                                        barcodesToSend.push(item);
+
+                                        updateGrandTotal();
+                                        
+
+                                        // Add event listener to the newly added quantity input
+                                        $("#goods_table tbody").on('input', 'input[name="itemAmount"], input[name="itemQty"], input[name="itemDesc"]', function() {
+                                            updateGrandTotal();
+
+                                            // Update the corresponding item in categorysToSend array
+                                            var row = $(this).closest('tr');
+                                            var id = row.data('id');
+                                            var newQuantity = parseInt(row.find('input[name="itemQty"]').val()) || 0;
+                                            var newDescription = parseInt(row.find('input[name="itemDesc"]').val()) || 0;
+
+                                            var categoryToSend = categorysToSend.find(b => b.id === id);
+                                            if (categoryToSend) {
+                                                categoryToSend.quantity = newQuantity;
+                                                // console.log(categoryToSend);
+                                            }
+                                        });
+
+                                        categorysToSend.push(item);
                                     }
                                 });
                             } else {
                                 $("#goods_table tbody").append(`
                                     <tr>
-                                        <td colspan="6">No Data Found</td> <!-- Updated colspan to 5 to account for columns -->
+                                        <td colspan="6">No Data Found</td>
                                     </tr>
                                 `);
                             }
-                            $("#barcode_input").val('');
+                            $("#category_input").val('');
                         },
                         error: function(jqXHR, textStatus, errorThrown) {
                             console.error("Error fetching goods info: ", textStatus, errorThrown);
                         }
                     });
                 } else {
-                    alert("Please enter a barcode.");
+                    alert("Please enter a category.");
                 }
             });
-            
 
             $("#sell_submit").click(function() {
-                //console.log(barcodesToSend); // Check JSON format before sending
-            
-                // Gather additional form data
+                // console.log(categorysToSend);
                 var discount = $("#discount").val();
                 var buyerName = $("#buyer_name").val();
-                var buyerAddress = $("#buyer_address").val();
+                // var description = $("#description").val();
+                var buyerBillAddress = $("#billing_field").val();
+                var buyerShipAddress = $("#shipadd_field").val();
                 var contactNumber = $("#contact_number").val();
                 var state = $("#state").val();
+                var gstin = $("#gst_field").val();
                 var invoiceMaker = $("#invoice_maker").val();
-            
-                // Combine barcodesToSend array with additional form data
+                var delNoDate = $("#delNoDate").val();
+                var paymentMethod2 = $("#paymentMethod2").val();
+                var refNoDate = $("#refNoDate").val();
+                var othRef = $("#othRef").val();
+                var buyOdrNo = $("#buyOdrNo").val();
+                var dated = $("#dated").val();
+                var disDocNo = $("#disDocNo").val();
+                var delNoteDate = $("#delNoteDate").val();
+                var hyp = $("#hyp").val();
+                var des = $("#des").val();
+                var terOfDel = $("#terOfDel").val();
+                var extChaName = $("#extChaName").val();
+                var chaAmount = $("#chaAmount").val();
+                var receivedinput = $("#toggle-input").val();
+
+                var deliveryNumber = $("#delivery_number").val();
+                var deliveryDate = $("#delivery_date").val();
+
                 var dataToSend = {
-                    sell_submit: barcodesToSend,
+                    sell_submit: categorysToSend,
                     discount: discount,
                     buyer_name: buyerName,
-                    buyer_address: buyerAddress,
+                    // description: description,
+                    buyer_billAddress: buyerBillAddress,
+                    buyer_shipAddress: buyerShipAddress,
                     contact_number: contactNumber,
                     state: state,
-                    invoice_maker: invoiceMaker
+                    gstin: gstin,
+                    invoice_maker: invoiceMaker,
+                    delNoDate: delNoDate,
+                    paymentMethod2: paymentMethod2,
+                    refNoDate: refNoDate,
+                    othRef: othRef,
+                    buyOdrNo: buyOdrNo,
+                    dated: dated,
+                    disDocNo: disDocNo,
+                    delNoteDate: delNoteDate,
+                    hyp: hyp,
+                    des: des,
+                    terOfDel: terOfDel,
+                    extChaName: extChaName,
+                    chaAmount: chaAmount,
+                    receivedinput: receivedinput,
+                    delivery_number: deliveryNumber,
+                    delivery_date: deliveryDate
                 };
-            
-                if (barcodesToSend.length > 0) {
+
+                if (categorysToSend.length > 0) {
                     $.ajax({
                         url: "backend/sellBack.php",
                         method: "POST",
-                        data: dataToSend, // Send combined data
+                        data: JSON.stringify(dataToSend), // Send combined data as JSON
+                        contentType: "application/json",
                         success: function(response) {
                             console.log("Data sent to sell.php successfully.");
-                            console.log(response); // Log the response from sell.php
-                            // Clear the goods table or perform any other necessary actions after processing
+                            console.log(response);
                             $("#goods_table tbody").empty();
-                            barcodesToSend = []; // Clear the barcodesToSend array
-                            grandTotal = 0; // Reset grand total
-                            $("#grand_total").text(grandTotal.toFixed(2));
-                            // Clear the input fields
+                            categorysToSend = [];
+                            $("#grand_total").text("0.00");
                             $("#discount").val('');
                             $("#buyer_name").val('');
                             $("#buyer_address").val('');
                             $("#contact_number").val('');
                             $("#state").val('');
+                            $("#warranty_period").val('');
                             $("#invoice_maker").val('');
+                            $("#delivery_number").val('');
+                            $("#delivery_date").val('');
                         },
                         error: function(jqXHR, textStatus, errorThrown) {
                             console.error("Error sending data to sell.php: ", textStatus, errorThrown);
                         }
                     });
                 } else {
-                    alert("No barcodes to send.");
+                    alert("No categorys to send.");
                 }
             });
-            
-            
-            
         });
+
         
     </script>
     

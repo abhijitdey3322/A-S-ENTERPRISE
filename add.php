@@ -29,23 +29,46 @@
                     <span class="fs-5">A S ENTERPRISE</span>
                 </a>
                 <hr>
-                <ul class="nav nav-pills flex-column mb-auto" id="menu">
+                <ul class="nav nav-pills mb-auto d-flex flex-column list-unstyled ps-0">
                     <li class="nav-item">
-                        <a href="./sell.php" class="nav-link d-flex align-items-center my-3  p-2 text-light"
+                        <a href="./sell.php" class="nav-link d-flex align-items-center my-1  p-2 text-light"
                             aria-current="page"><i
-                                class="bg-dark fa-solid fa-file-invoice-dollar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
-                                style=" height: 30px;width:30px"></i> SELL</a>
+                                class="fa-solid fa-file-invoice-dollar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
+                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">SELL</span></a>
                     </li>
                     <li>
-                        <a href="./add.php" class="nav-link active d-flex align-items-center my-3  p-2 text-light"><i
-                                class="bg-dark fa-solid fa-cart-plus me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
-                                style=" height: 30px;width:30px"></i> ADD PRODUCTS</a>
+                        <a href="./add.php" class="active nav-link d-flex align-items-center my-1  p-2 text-light"><i
+                                class="bg-dark fa-solid fa-truck-ramp-box me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
+                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">ADD PRODUCTS</span></a>
                     </li>
                     <li>
-                        <a href="./details.php" class="nav-link d-flex align-items-center my-3  p-2 text-light"><i
-                                class="fa-solid fa-file-lines me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
-                                style=" height: 30px;width:30px"></i> SELL DETAILS</a>
+                        <a href="./purchase.php" class="nav-link d-flex align-items-center my-1  p-2 text-light"><i
+                                class="fa-solid fa-cart-shopping me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
+                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">ADD Purchase</span></a>
                     </li>
+                    <li>
+                        <a href="./items.php" class="nav-link d-flex align-items-center my-1  p-2 text-light"><i
+                                class=" fa-solid fa-shapes me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
+                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">Items</span></a>
+                    </li>
+                    <li>
+                        <a href="./parties.php" class="nav-link d-flex align-items-center my-1  p-2 text-light"><i
+                                class=" fa-solid fa-people-group me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
+                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">Parties</span></a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link d-flex align-items-center my-1  p-2 text-light" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="false"><i
+                                class="fa-solid fa-plus me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
+                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">Reports</span></a>
+                        <div class="collapse" id="home-collapse" style="">
+                        <ul class="btn-toggle-nav list-unstyled fw-normal ms-5 pb-1 small">
+                            <li><a href="./sellReport.php" class="fs-7 nav-link d-flex align-items-center p-2 text-light"><i class="fa-solid fa-chart-bar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center" style=" height: 20px;width:20px"></i> <span class="d-none d-lg-block">Sell Report</span></a></li>
+                            <li><a href="./purchaseReport.php" class="fs-7 nav-link d-flex align-items-center p-2 text-light"><i class="fa-solid fa-chart-bar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center" style=" height: 20px;width:20px"></i> <span class="d-none d-lg-block">Purchase Report</span></a></li>
+                            <li><a href="./gstReport.php" class="fs-7 nav-link d-flex align-items-center p-2 text-light"><i class="fa-solid fa-chart-bar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center" style=" height: 20px;width:20px"></i> <span class="d-none d-lg-block">GST Report</span></a></li>
+                        </ul>
+                        </div>
+                    </li>
+
                 </ul>
                 <hr>
                 <div class="dropdown">
@@ -150,7 +173,7 @@
                             <thead class="table-primary" style="position:sticky; top:0;">
                                 <tr>
                                     <th>SL NO.</th>
-                                    <th>Barcode No.</th>
+                                    <th>Category</th>
                                     <th>Goods Name</th>
                                     <th>Description</th> <!-- Adjust the width as needed -->
                                     <th>Amount</th>
@@ -164,7 +187,7 @@
                             <tbody >
                                 <?php
                                         // SQL query
-                                    $sql = "SELECT id, barcode, name, description, amount, quantity, `HSN/SAC` AS hsn_sac, gst, brand FROM goods ORDER BY id DESC";
+                                    $sql = "SELECT id, category, name, description, amount, quantity, `HSN/SAC` AS hsn_sac, gst, brand FROM goods ORDER BY id DESC";
                                     // Execute query
                                     $result = $conn->query($sql);
                                     if ($result === false) {
@@ -176,7 +199,7 @@
                                             while($row = $result->fetch_assoc()) {
                                                 echo '<tr scope="row">';
                                                 echo '<td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 50px;" onmouseover="this.style.whiteSpace=\'normal\'; this.style.overflow=\'visible\'; this.style.textOverflow=\'inherit\';" onmouseout="this.style.whiteSpace=\'nowrap\'; this.style.overflow=\'hidden\'; this.style.textOverflow=\'ellipsis\';">' . $row["id"] . '</td>';
-                                                echo '<td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px;" onmouseover="this.style.whiteSpace=\'normal\'; this.style.overflow=\'visible\'; this.style.textOverflow=\'inherit\';" onmouseout="this.style.whiteSpace=\'nowrap\'; this.style.overflow=\'hidden\'; this.style.textOverflow=\'ellipsis\';">' . $row["barcode"] . '</td>';
+                                                echo '<td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px;" onmouseover="this.style.whiteSpace=\'normal\'; this.style.overflow=\'visible\'; this.style.textOverflow=\'inherit\';" onmouseout="this.style.whiteSpace=\'nowrap\'; this.style.overflow=\'hidden\'; this.style.textOverflow=\'ellipsis\';">' . $row["category"] . '</td>';
                                                 echo '<td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px;" onmouseover="this.style.whiteSpace=\'normal\'; this.style.overflow=\'visible\'; this.style.textOverflow=\'inherit\';" onmouseout="this.style.whiteSpace=\'nowrap\'; this.style.overflow=\'hidden\'; this.style.textOverflow=\'ellipsis\';">' . $row["name"] . '</td>';
                                                 echo '<td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px;" onmouseover="this.style.whiteSpace=\'normal\'; this.style.overflow=\'visible\'; this.style.textOverflow=\'inherit\';" onmouseout="this.style.whiteSpace=\'nowrap\'; this.style.overflow=\'hidden\'; this.style.textOverflow=\'ellipsis\';">' . $row["description"] . '</td>';
                                                 echo '<td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px;" onmouseover="this.style.whiteSpace=\'normal\'; this.style.overflow=\'visible\'; this.style.textOverflow=\'inherit\';" onmouseout="this.style.whiteSpace=\'nowrap\'; this.style.overflow=\'hidden\'; this.style.textOverflow=\'ellipsis\';">' . $row["amount"] . '</td>';
