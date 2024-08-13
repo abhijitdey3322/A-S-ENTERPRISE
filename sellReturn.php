@@ -1,6 +1,6 @@
 <?php 
     include 'backend/db_connection.php';
-    session_start();
+        session_start();
     // Check if the user is verified
     if (!isset($_SESSION['verified']) || $_SESSION['verified'] !== true) {
         header("Location: OTP.php");
@@ -9,31 +9,10 @@
     // Query to fetch user from database
     $query = "SELECT * FROM users WHERE id = '1'";
     $result = mysqli_query($conn, $query);
-    // Handle AJAX request
-    if (isset($_POST['category'])) {
-        $category = $_POST['category'];
-
-        // Prepare the SQL query
-        $stmt = $conn->prepare("SELECT DISTINCT name, gst, `HSN/SAC` AS hsn_sac, amount, trackingType FROM goods WHERE category = ?");
-        $stmt->bind_param("s", $category);
-        $stmt->execute();
-        $itemresult = $stmt->get_result();
-
-        $items = [];
-        if ($itemresult->num_rows > 0) {
-            while ($row = $itemresult->fetch_assoc()) {
-                $items[] = $row;
-            }
-        }
-
-        echo json_encode($items);
-
-        $stmt->close();
-        exit; // End script execution after sending the JSON response
-    }
 ?>
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -54,7 +33,7 @@
 
 <body>
     <div class="mainBody row  g-0">
-        <main class="d-flex flex-nowrap sidebar col-auto" >
+        <main class="d-flex flex-nowrap sidebar col-auto">
             <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 280px; height:100vh;">
                 <a href="./index.php"
                     class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
@@ -65,14 +44,14 @@
                 <ul class="overflow-auto bd-sidebar nav nav-pills mb-auto d-flex flex-column list-unstyled ps-0" >
                     <div style="height: calc(100vh - 50px + 30px);">
                         <li class="nav-item">
-                            <a href="./sell.php" class="active nav-link d-flex align-items-center me-1  p-2 text-light"
+                            <a href="./sell.php" class="nav-link d-flex align-items-center me-1  p-2 text-light"
                                 aria-current="page"><i
-                                    class="bg-dark fa-solid fa-file-invoice-dollar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
+                                    class="fa-solid fa-file-invoice-dollar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
                                     style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">Sell</span></a>
                         </li>
                         <li>
-                            <a href="./sellReturn.php" class="nav-link d-flex align-items-center me-1 p-2 text-light"><i
-                                    class=" fa-solid fa-file-import me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
+                            <a href="./sellReturn.php" class="active nav-link d-flex align-items-center me-1 p-2 text-light"><i
+                                    class="bg-dark fa-solid fa-file-import me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
                                     style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">Sell Return</span></a>
                         </li>
                         <li>
@@ -175,7 +154,8 @@
         <div class="col d-flex flex-column">
             <nav class="navbar navbar-expand-lg bg-secondary align-self-stretch">
                 <div class="container-fluid">
-                    <a class="navbar-brand d-flex align-items-center justify-content-center" style="height:50px; width:50px; text-align:center;padding:0;" href="#">
+                    <a class="navbar-brand d-flex align-items-center justify-content-center"
+                        style="height:50px; width:50px; text-align:center;padding:0;" href="#">
                         <?php 
                             if (mysqli_num_rows($result) == 1) {
                                 $user = mysqli_fetch_assoc($result);
@@ -196,7 +176,7 @@
                                 </a>
                             </li>
                         </ul>
-                        <button id="togglessection" class="me-4 btn btn-primary rounded-5">Sell By Custom Details</button>
+                        <button id="togglessection" class="me-4 btn btn-primary rounded-5">Show Sell Return</button>
                         <?php 
                             // Check if user status is inactive
                             if ($user['status'] === 'inactive') {
@@ -208,18 +188,19 @@
                     </div>
                 </div>
             </nav>
+            <!-- <div class="container-fluid d-flex justify-content-center align-items-center flex-grow-1 text-center"id=""> -->
             <div class="container-fluid d-flex justify-content-center align-items-center flex-grow-1 text-center"
                 id="chnageSection">
                 <!--Enter your code here for sell  -->
-                <div class="container p-2 d-flex justify-content-center align-items-center">
-                    <form action="./backend/sellBack.php" method="POST" id="sell_form" class="row justify-content-center" style="width: 100%;">
-                        <div id="section1" class="d-flex row">
+                <div id="section1" class="container p-2 d-flex justify-content-center align-items-center">
+                    <form id="sell_form" class="row justify-content-center" style="width: 100%;">
+                        <div class="row">
                             <div class="col input-group mb-2">
-                            <select id="category_select" class="col form-select border-primary border-2"
+                                <select id="category_select" class="col form-select border-primary border-2"
                                     aria-label="Default select example" onchange="handleSelectChange(this)">
-                                <option value="" disabled selected>Goods Name</option>
-                                <option value="custom"  class="bg-primary text-light">Add New Goods</option>
-                                <?php
+                                    <option value="" disabled selected>Goods Name</option>
+                                    <option value="custom" class="bg-primary text-light">Add New Goods</option>
+                                    <?php
 
                                 // SQL query to fetch all unique names from the goods table
                                 $sqlCat = "SELECT DISTINCT name FROM goods";
@@ -244,7 +225,7 @@
                                     echo '<option value="" disabled>No goods found</option>';
                                 }
                                 ?>
-                            </select>
+                                </select>
                             </div>
 
                             <!-- <div class="col input-group mb-2">
@@ -256,13 +237,18 @@
                             </div> -->
                             <div class="col mb-2">
                                 <div class="input-group">
-                                    <span class="toggle-icon btn btn-outline-secondary">🔄</span> <!-- Icon for toggling -->
-                                    <select class="col form-select border-primary border-2" name="category" id="category_input" aria-label="Default select example">
-                                    <option selected>Goods Serial/ Chasis no.</option>
-                                    <!-- <option value="custom" class="bg-primary text-light">Custom Input</option> -->
+                                    <span class="toggle-icon btn btn-outline-secondary">🔄</span>
+                                    <!-- Icon for toggling -->
+                                    <select class="col form-select border-primary border-2" name="category"
+                                        id="category_input" aria-label="Default select example">
+                                        <option selected>Goods Serial/ Chasis no.</option>
+                                        <!-- <option value="custom" class="bg-primary text-light">Custom Input</option> -->
                                     </select>
-                                    <input type="text" id="custom_input" class="form-control d-none border border-primary border-2 text-custom" placeholder="Enter custom Goods Serial/ Chasis no.">
-                                    <button class="btn btn-outline-primary border-2" type="button" id="button_addgoodsDetails">ADD</button>
+                                    <input type="text" id="custom_input"
+                                        class="form-control d-none border border-primary border-2 text-custom"
+                                        placeholder="Enter custom Goods Serial/ Chasis no.">
+                                    <button class="btn btn-outline-primary border-2" type="button"
+                                        id="button_addgoodsDetails">ADD</button>
                                 </div>
                             </div>
                             <div class="mb-2 overflow-auto" style="height:200px;">
@@ -279,121 +265,16 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        
+
                                     </tbody>
                                 </table>
                             </div>
                             <div class="mb-2">
                                 <!-- <strong>Grand Total:</strong> <input class ="border border-2 border-primary rounded-2"type="text" id="grand_total"></input> -->
                                 <!-- <strong>Grand Total:</strong> <span id="grand_total"></span> -->
-                                <strong>Grand Total:</strong> <input class ="border border-2 border-primary rounded-2"type="text" id="grand_total" readonly></input>
+                                <strong>Grand Total:</strong> <input class="border border-2 border-primary rounded-2"
+                                    type="text" id="grand_total" readonly></input>
 
-                            </div>
-                        </div>
-                        <div id="section2" class=" d-none justify-content-center row">
-                            <div class="col mb-2">
-                                <select class="form-select border-primary border-2" name="categoryName"
-                                    id="inputGroupSelect02" onchange="handleSelectChange(this),findName(this)">
-                                    <option value="" disabled selected>Category</option>
-                                    <option value="custom" class="bg-primary text-light">Add New Category</option>
-                                    <?php
-                                            // SQL query to fetch all categories
-                                            $sql = "SELECT category_name FROM category";
-                                            // Execute the query
-                                            $result = $conn->query($sql);
-                                            // Check if there are any results
-                                            if ($result->num_rows > 0) {
-                                                // Loop through the results and generate options
-                                                while ($row = $result->fetch_assoc()) {
-                                                    echo '<option value="' .$row['category_name'] . '">' . $row['category_name'] . '</option>';
-                                                }
-                                            } else {
-                                                echo '<option value="" disabled>No categories found</option>';
-                                            }
-                                        ?>
-                                </select>
-                            </div>
-                            <div class="col mb-2" id="selectDiv">
-                                <select class="form-select border border-primary border-2 text-custom" name="itemname" id="itemname" >
-                                    <option value="">Select Item</option>
-                                    <option value="custom" class="bg-primary text-light">Custom Input</option>
-                                </select>
-                            </div>
-                            <script>
-                                function findName(selectElement) {
-                                    let category = $(selectElement).val();
-                                    $.ajax({
-                                        url: '', // The PHP file itself top writen
-                                        type: 'POST',
-                                        data: { category: category },
-                                        success: function(response) {
-                                            let items = JSON.parse(response);
-                                            let $itemSelect = $('#itemname');
-                                            $itemSelect.empty();
-                                            $itemSelect.append('<option value="">Select Item</option>');
-                                            $itemSelect.append('<option value="custom" class="bg-primary text-light">Custom Input</option>');
-                                            items.forEach(item => {
-                                                $itemSelect.append(
-                                                    `<option value="${item.name}" data-hsn="${item.hsn_sac}" data-gst="${item.gst}" data-amount="${item.amount}"data-type="${item.trackingType}">${item.name}</option>`
-                                                );
-                                            });
-                                        },
-                                        error: function() {
-                                            alert('Failed to fetch items.');
-                                        }
-                                    });
-                                }
-                            </script>
-                            <div class="col mb-2" id="customInputDiv" style="display: none;">
-                                <input type="text" class="form-control border border-primary border-2 text-custom" id="customItemInput" placeholder="Enter custom item name">
-                            </div>
-                            <div class="col input-group mb-2">
-                                <input type="text" class="form-control border border-primary border-2 text-custom"
-                                    name="quantity" id="quantity" placeholder="Quantity" aria-label="Quantity" >
-                                    <!-- <button id="addGoodsDetails" class="btn btn-primary ">ADD</button> -->
-                            </div>                     
-                            <div class="d-flex justify-content-center row row-cols-3">
-                                <!-- custom half details of goods like serial number chasisnumber modal motor color etc -->
-                                <div class="d-flex col mb-4">
-                                    <input type="text" class="form-control border border-primary border-2 text-custom"
-                                        name="hsnsac" id="hsnsac" placeholder="HSN/SAC Number" aria-label="HSN/SAC Number" >
-                                </div>
-                                <div class="d-flex col mb-4">
-                                    <input type="text" class="form-control border border-primary border-2 text-custom"
-                                        name="GST" id="gst" placeholder="GST" aria-label="GST" >
-                                </div>
-                                <input type="hidden" id="trackingType">
-                                <div class="d-flex col mb-4">
-                                    <input type="text" id="amount" class="form-control border border-primary border-2 text-custom"
-                                        name="amount" placeholder="Amount per pcs" aria-label="Amount">
-                                </div>
-                                
-                                <div class="d-flex justify-content-center col overflow-auto row border border-2 border-secondary mb-2 p-2" style="width:100%;height:25vh">
-                                    <div id="formContainer" class="row">
-                                        <div class=" form-row col-12 mb-4">
-                                            <div class="row g-2">
-                                                <div class="col">
-                                                    <input type="text" class="form-control border border-primary border-2 text-custom additional serial-input" name="serialNumber[]" placeholder="Serial Number" >
-                                                </div>
-                                                <div class="col">
-                                                    <input type="text" class="form-control border border-primary border-2 text-custom additional chasis-input" name="chasisNumber[]" placeholder="Chasis Number" >
-                                                </div>
-                                                <div class="col">
-                                                    <input type="text" class="form-control border border-primary border-2 text-custom additional chasis-input" name="modelNumber[]" placeholder="Model Number" >
-                                                </div>
-                                                <div class="col">
-                                                    <input type="text" class="form-control border border-primary border-2 text-custom additional chasis-input" name="motorNumber[]" placeholder="Motor Number" >
-                                                </div>
-                                                <div class="col">
-                                                    <input type="text" class="form-control border border-primary border-2 text-custom additional chasis-input" name="color[]" placeholder="Color" >
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-center mb-2">
-                                <strong>Grand Total:</strong> <input class ="border border-2 border-primary rounded-2"type="text" id="grand_total1" readonly></input>
                             </div>
                         </div>
                         <div class="row row-cols-4">
@@ -417,7 +298,8 @@
                                         echo "Error: " . $conn->error;
                                     }
                                 ?>
-                                <select class="form-select border-primary border-2" id="buyer_details" aria-label="Default select example">
+                                <select class="form-select border-primary border-2" id="buyer_details"
+                                    aria-label="Default select example">
                                     <option selected>Buyer Details</option>
                                     <option value="custom" class="bg-primary text-light">Add Temporary Parties</option>
                                     <?php echo $options; ?>
@@ -430,133 +312,127 @@
                             <input type="hidden" id="shipadd_field" placeholder="Shipping Address">
                             <input type="hidden" id="state" placeholder="State Code">
 
-                            <!-- Temp Parties Add Modal -->
-                            <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="customModalLabel" aria-hidden="true">
+                            <!-- Modal -->
+                            <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="customModalLabel"
+                                aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
                                         <div class="modal-header bg-primary text-light">
-                                            <h5 class="modal-title" id="customModalLabel">Add Temporary Party Details</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            <h5 class="modal-title" id="customModalLabel">Add Temporary Party Details
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
                                         </div>
                                         <div class="row row-cols-2 modal-body">
                                             <div class="col mb-3">
-                                                <input type="text" class="form-control border border-2 border-primary" placeholder="Parties Name" id="modalCustomItemInput">
+                                                <input type="text" class="form-control border border-2 border-primary"
+                                                    placeholder="Parties Name" id="modalCustomItemInput">
                                             </div>
                                             <div class="col mb-3">
-                                                <input type="text" class="form-control border border-2 border-primary" placeholder="Parties Number" id="modalCustomContactInput">
+                                                <input type="text" class="form-control border border-2 border-primary"
+                                                    placeholder="Parties Number" id="modalCustomContactInput">
                                             </div>
                                             <div class="col mb-3">
-                                                <input type="text" class="form-control border border-2 border-primary" placeholder="Parties Bill Address" id="modalBillingAddressInput">
+                                                <input type="text" class="form-control border border-2 border-primary"
+                                                    placeholder="Parties Bill Address" id="modalBillingAddressInput">
                                             </div>
                                             <div class="col mb-3">
-                                                <input type="text" class="form-control border border-2 border-primary" placeholder="Parties Ship Address" id="modalShippingAddressInput">
+                                                <input type="text" class="form-control border border-2 border-primary"
+                                                    placeholder="Parties Ship Address" id="modalShippingAddressInput">
                                             </div>
                                             <div class="col mb-3">
-                                                <input type="text" class="form-control border border-2 border-primary" placeholder="Parties State Code" id="modalStateCodeInput">
+                                                <input type="text" class="form-control border border-2 border-primary"
+                                                    placeholder="Parties State Code" id="modalStateCodeInput">
                                             </div>
                                             <div class="col mb-3">
-                                                <button type="button" class="w-100 btn btn-primary rounded-5" id="saveCustomDetails">USE</button>
+                                                <button type="button" class="w-100 btn btn-primary rounded-5"
+                                                    id="saveCustomDetails">USE</button>
                                             </div>
-                                            
+
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col mb-2">
-                                <select class="form-select border-primary border-2" id="paymentMethod2"
-                                    aria-label="Default select example" onchange="handlePaymentMethodChange(this)">
-                                    <option selected value="">Payment Method</option>
-                                    <option value="Cash">Cash</option>
-                                    <option value="Cheque">Cheque</option>
-                                    <option value="Account">Account</option>
-                                </select>
-                            </div>
-                            <input type="hidden" id="paymentReferences">
 
+                            <div class="col mb-2">
+                                <input type="text" class="form-control border border-primary border-2 text-custom"
+                                    id="ReturnNo" placeholder="Return No" aria-label="ReturnNo">
+                            </div>
+                            <!-- <div class="col-12">
+                                <div class="row row-cols-5 justify-content-start"> -->
+
+                            <div class="col mb-2">
+                                <input type="date" class="form-control border border-primary border-2 text-custom"
+                                    id="dated" placeholder="Dated" aria-label="Dated">
+                            </div>
+
+                            <div class="col mb-2">
+                                <input type="text" class="form-control border border-primary border-2 text-custom"
+                                    id="description" placeholder="Description" aria-label="description">
+                            </div>
                             <div class="col mb-2">
                                 <input type="text" class="form-control border border-primary border-2 text-custom"
                                     id="discount" placeholder="Discount" aria-label="Discount">
                             </div>
-                            <div class="col mb-2">
+                            <div class="mb-4">
+                                <select class="form-select border-primary border-2" id="pos" name="StateCode">
+                                    <option selected>Place of supply</option>
+                                    <option value="Jammu and Kashmir - 1">Jammu and Kashmir - 1</option>
+                                    <option value="Himachal Pradesh - 2">Himachal Pradesh - 2</option>
+                                    <option value="Punjab - 3">Punjab - 3</option>
+                                    <option value="Chandigarh - 4">Chandigarh - 4</option>
+                                    <option value="Uttarakhand - 5">Uttarakhand - 5</option>
+                                    <option value="Haryana - 6">Haryana - 6</option>
+                                    <option value="Delhi - 7">Delhi - 7</option>
+                                    <option value="Rajasthan - 8">Rajasthan - 8</option>
+                                    <option value="Uttar Pradesh - 9">Uttar Pradesh - 9</option>
+                                    <option value="Bihar - 10">Bihar - 10</option>
+                                    <option value="Sikkim - 11">Sikkim - 11</option>
+                                    <option value="Arunachal Pradesh - 12">Arunachal Pradesh - 12
+                                    </option>
+                                    <option value="Nagaland - 13">Nagaland - 13</option>
+                                    <option value="Manipur - 14">Manipur - 14</option>
+                                    <option value="Mizoram - 15">Mizoram - 15</option>
+                                    <option value="Tripura - 16">Tripura - 16</option>
+                                    <option value="Meghalaya - 17">Meghalaya - 17</option>
+                                    <option value="Assam - 18">Assam - 18</option>
+                                    <option value="West Bengal - 19">West Bengal - 19</option>
+                                    <option value="Jharkhand - 20">Jharkhand - 20</option>
+                                    <option value="Odisha - 21">Odisha - 21</option>
+                                    <option value="Chhattisgarh - 22">Chhattisgarh - 22</option>
+                                    <option value="Madhya Pradesh - 23">Madhya Pradesh - 23</option>
+                                    <option value="Gujarat - 24">Gujarat - 24</option>
+                                    <option value="Daman and Diu - 25">Daman and Diu - 25</option>
+                                    <option value="Dadra and Nagar Haveli - 26">Dadra and Nagar Haveli -
+                                        26</option>
+                                    <option value="Maharashtra - 27">Maharashtra - 27</option>
+                                    <option value="Andhra Pradesh (Before Division) - 28">Andhra Pradesh
+                                        (Before Division) - 28</option>
+                                    <option value="Karnataka - 29">Karnataka - 29</option>
+                                    <option value="Goa - 30">Goa - 30</option>
+                                    <option value="Lakshadweep - 31">Lakshadweep - 31</option>
+                                    <option value="Kerala - 32">Kerala - 32</option>
+                                    <option value="Tamil Nadu - 33">Tamil Nadu - 33</option>
+                                    <option value="Puducherry - 34">Puducherry - 34</option>
+                                    <option value="Andaman and Nicobar Islands - 35">Andaman and Nicobar
+                                        Islands - 35</option>
+                                    <option value="Telangana - 36">Telangana - 36</option>
+                                    <option value="Andhra Pradesh (New) - 37">Andhra Pradesh (New) - 37
+                                    </option>
+                                    <option value="Ladakh - 38">Ladakh - 38</option>
+                                </select>
+                            </div>
+                            <div class="col-3 mb-2">
                                 <input type="text" class="form-control border border-primary border-2 text-custom"
-                                required id="invoice_maker" placeholder="Invoice Maker Name" aria-label="Invoice Maker Name">
+                                    id="ReturnAmount" placeholder="Return Amount" aria-label="ReturnAmount">
                             </div>
-                            <div class="col-12">
-                                <div class="row row-cols-5 justify-content-start">
-                                    <div class="col mb-2">
-                                        <input type="text" class="form-control border border-primary border-2 text-custom"
-                                            id="delNoDate" placeholder="Delivery No. & Date"
-                                            aria-label="delNoDate">
-                                    </div>
-                                    <div class="col mb-2">
-                                        <input type="text" class="form-control border border-primary border-2 text-custom"
-                                            id="refNoDate" placeholder="Reference No & Date"
-                                            aria-label="refNoDate">
-                                    </div>
-                                    <div class="col mb-2">
-                                        <input type="text" class="form-control border border-primary border-2 text-custom"
-                                            id="othRef" placeholder="Other References"
-                                            aria-label="othRef">
-                                    </div>
-                                    <div class="col mb-2">
-                                        <input type="text" class="form-control border border-primary border-2 text-custom"
-                                            id="buyOdrNo" placeholder="Buyer's Order No."
-                                            aria-label="buyOdrNo">
-                                    </div>
-                                    <div class="col mb-2">
-                                        <input type="date" class="form-control border border-primary border-2 text-custom"
-                                            id="dated" placeholder="Dated"
-                                            aria-label="Contact">
-                                    </div>
-                                    <div class="col mb-2">
-                                        <input type="text" class="form-control border border-primary border-2 text-custom"
-                                            id="disDocNo" placeholder="Dispatch Doc No."
-                                            aria-label="disDocNo">
-                                    </div>
-                                    <div class="col mb-2">
-                                        <input type="text" class="form-control border border-primary border-2 text-custom"
-                                            id="delNoteDate" placeholder="Delivery Note Date"
-                                            aria-label="delNoteDate">
-                                    </div>
-                                    <div class="col mb-2">
-                                        <input type="text" class="form-control border border-primary border-2 text-custom"
-                                            id="hyp" placeholder="HYPOTHICATION"
-                                            aria-label="hyp">
-                                    </div>
-                                    <div class="col mb-2">
-                                        <input type="text" class="form-control border border-primary border-2 text-custom"
-                                            id="des" placeholder="Destination"
-                                            aria-label="des">
-                                    </div>
-                                    <div class="col mb-2">
-                                        <input type="text" class="form-control border border-primary border-2 text-custom"
-                                            id="terOfDel" placeholder="Terms Of Delivery"
-                                            aria-label="terOfDel">
-                                    </div>
-                                    <div class="col-3 mb-2">
-                                        <input type="text" class="form-control border border-primary border-2 text-custom"
-                                            id="extChaName" placeholder="Extra Charges Name"
-                                            aria-label="extChaName">
-                                    </div>
-                                    <div class="col-3 mb-2">
-                                        <input type="text" class="form-control border border-primary border-2 text-custom"
-                                            id="chaAmount" placeholder="Charged Amount"
-                                            aria-label="chaAmount">
-                                    </div>
-                                    <div class="col-3 mb-2">
-                                        <div class="input-group mb-3">
-                                        <div class="input-group-text border border-primary border-2">
-                                            <input id="toggle-checkbox" class="form-check-input mt-0 border border-primary border-2" type="checkbox" aria-label="Checkbox for following text input">
-                                        </div>
-                                        <input id="toggle-input" type="text" class="form-control border border-primary border-2 text-custom disabled-input" placeholder="Received Amount" aria-label="Text input with checkbox" disabled>
-                                        </div>
-                                    </div>
-                                    <div class="col-3">
-                                        <button type="submit" style="width:100%;" id="sell_submit" name="sell_submit"class="btn-block col btn btn-primary fs-5 rounded-5">SELL
-                                            SUBMIT</button>
-                                    </div>
-                                </div>
+
+                            <div class="col-3">
+                                <button type="submit" style="width:100%;" id="sell_return" name="sell_return"
+                                    class="btn-block col btn btn-primary fs-5 rounded-5">Sell Return</button>
                             </div>
+                            <!-- </div>
+                            </div> -->
 
 
                         </div>
@@ -567,139 +443,118 @@
                             ensure smooth processing.</p> -->
                     </form>
                 </div>
-                <!-- payment reference -->
-                <div class="modal fade" id="customInputField" tabindex="-1" aria-labelledby="customModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="customModalLabel">Add Payment References</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="mb-4">
-                                    <input type="text"
-                                        class="form-control border border-primary border-2 text-custom"
-                                        name="References" id="modalReferencesInput" placeholder="References" aria-label="References">
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" id="paymentREF">SAVE</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Modal -->
-                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
-                    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header bg-primary ">
-                                <h1 class="modal-title fs-5 text-light" id="exampleModalCenterTitle">Owner Login
-                                </h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form action="backend/loginOwner.php" method="POST">
-                                    <div class="mb-3 text-start">
-                                        <label for="exampleInputEmail1"
-                                            class="form-label text-custom">Username</label>
-                                        <input type="text" class="form-control border border-primary"
-                                            id="exampleInputEmail1" name="username" aria-describedby="emailHelp">
-                                    </div>
-                                    <div class="mb-3 text-start">
-                                        <label for="exampleInputPassword1"
-                                            class="form-label text-custom">Password</label>
-                                        <input type="password" class="form-control border border-primary"
-                                            id="exampleInputPassword1" name="password">
-                                    </div>
-                                    <div class="mb-3 text-start form-check">
-                                        <input type="checkbox" class="form-check-input border border-primary"
-                                            id="exampleCheck1">
-                                        <label class="form-check-label text-custom" for="exampleCheck1">Check me
-                                            out</label>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary"
-                                        style="width:50%;border-radius:50px;">Login</button>
-                                </form>
-                            </div>
-                        </div>
+                <div id="section2" class="container-fluid overflow-auto d-none justify-content-center"
+                    style="width:100%;height:calc(100vh - 80px);">
+                    <div class="container-fluid m-0 p-0">
+                        <table class="table table-striped text-center" id="itemsDetails"
+                            style="width:100%;height:auto;">
+                            <thead class="table-primary" style="position:sticky; top:0;">
+                                <tr>
+                                    <th>SL NO.</th>
+                                    <th>Date</th>
+                                    <th>Return No</th>
+                                    <th>P O S</th>
+                                    <th>Parties Name</th>
+                                    <th>Contact Number</th>
+                                    <th>Serial/Chasis NO.</th>
+                                    <th>Total Amount</th>
+                                    <th>Return Amount</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php                        
+                                $sql = "SELECT * FROM sellreturn ORDER BY id DESC";
+                                $result = $conn->query($sql);
+                                if ($result->num_rows > 0) {
+                                    while($row = $result->fetch_assoc()) {
+                                        echo '<tr scope="row">';
+                                        echo '<td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 50px;" onmouseover="this.style.whiteSpace=\'normal\'; this.style.overflow=\'visible\'; this.style.textOverflow=\'inherit\';" onmouseout="this.style.whiteSpace=\'nowrap\'; this.style.overflow=\'hidden\'; this.style.textOverflow=\'ellipsis\';">' . $row["id"] .'</td>';
+                                        echo '<td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px;" onmouseover="this.style.whiteSpace=\'normal\'; this.style.overflow=\'visible\'; this.style.textOverflow=\'inherit\';" onmouseout="this.style.whiteSpace=\'nowrap\'; this.style.overflow=\'hidden\'; this.style.textOverflow=\'ellipsis\';">'. $row["dateTime"] .'</td>';
+                                        echo '<td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px;" onmouseover="this.style.whiteSpace=\'normal\'; this.style.overflow=\'visible\'; this.style.textOverflow=\'inherit\';" onmouseout="this.style.whiteSpace=\'nowrap\'; this.style.overflow=\'hidden\'; this.style.textOverflow=\'ellipsis\';">' . $row["sellReturnNo"] .'</td>';
+                                        echo '<td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px;" onmouseover="this.style.whiteSpace=\'normal\'; this.style.overflow=\'visible\'; this.style.textOverflow=\'inherit\';" onmouseout="this.style.whiteSpace=\'nowrap\'; this.style.overflow=\'hidden\'; this.style.textOverflow=\'ellipsis\';">' . $row["placeOfSupply"] .'</td>';  
+                                        echo '<td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px;" onmouseover="this.style.whiteSpace=\'normal\'; this.style.overflow=\'visible\'; this.style.textOverflow=\'inherit\';" onmouseout="this.style.whiteSpace=\'nowrap\'; this.style.overflow=\'hidden\'; this.style.textOverflow=\'ellipsis\';">'. $row["partiesName"] .'</td>';
+                                        echo '<td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px;" onmouseover="this.style.whiteSpace=\'normal\'; this.style.overflow=\'visible\'; this.style.textOverflow=\'inherit\';" onmouseout="this.style.whiteSpace=\'nowrap\'; this.style.overflow=\'hidden\'; this.style.textOverflow=\'ellipsis\';">'. $row["partiesContactNumber"] .'</td>';
+                                        echo '<td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px;" onmouseover="this.style.whiteSpace=\'normal\'; this.style.overflow=\'visible\'; this.style.textOverflow=\'inherit\';" onmouseout="this.style.whiteSpace=\'nowrap\'; this.style.overflow=\'hidden\'; this.style.textOverflow=\'ellipsis\';">';
+                                            if ($row['serialNumber']) {
+                                                echo "Serial Number- ".$row['serialNumber']."";
+                                            }
+                                            else {
+                                                echo "Chasis Number- ".$row['chasisNumber']."";
+                                            }
+                                        echo'</td>';
+                                        echo '<td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px;" onmouseover="this.style.whiteSpace=\'normal\'; this.style.overflow=\'visible\'; this.style.textOverflow=\'inherit\';" onmouseout="this.style.whiteSpace=\'nowrap\'; this.style.overflow=\'hidden\'; this.style.textOverflow=\'ellipsis\';">'. $row["totalAmount"] .'</td>';
+                                        echo '<td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px;" onmouseover="this.style.whiteSpace=\'normal\'; this.style.overflow=\'visible\'; this.style.textOverflow=\'inherit\';" onmouseout="this.style.whiteSpace=\'nowrap\'; this.style.overflow=\'hidden\'; this.style.textOverflow=\'ellipsis\';">'. $row["returnAmount"] .'</td>';
+                                        echo '<td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px;">';
+                                                if ($user['status'] === 'active') {
+                                                    echo '
+                                                        <a href="backend/delete.php?id=' . $row["id"] . '&table=sellreturn" class="link-danger">
+                                                            <i class="fa-solid fa-trash fs-5"></i>
+                                                        </a>';
+                                                }
+                                        echo'    </td>';
+                                        echo '</tr>';
+                                    }
+                                } else {
+                                    echo "0 results";
+                                }
+                                ?>
+
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 
             </div>
+            <!-- Modal -->
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary ">
+                            <h1 class="modal-title fs-5 text-light" id="exampleModalCenterTitle">Owner Login
+                            </h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="mb-3 text-start">
+                                    <label for="exampleInputEmail1" class="form-label text-custom">Username</label>
+                                    <input type="email" class="form-control border border-primary"
+                                        id="exampleInputEmail1" aria-describedby="emailHelp">
+                                </div>
+                                <div class="mb-3 text-start">
+                                    <label for="exampleInputPassword1" class="form-label text-custom">Password</label>
+                                    <input type="password" class="form-control border border-primary"
+                                        id="exampleInputPassword1">
+                                </div>
+                                <div class="mb-3 text-start form-check">
+                                    <input type="checkbox" class="form-check-input border border-primary"
+                                        id="exampleCheck1">
+                                    <label class="form-check-label text-custom" for="exampleCheck1">Check me
+                                        out</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary"
+                                    style="width:50%;border-radius:50px;">Login</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
     </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
-        document.getElementById("togglessection").addEventListener('click', function() {
-            let section1 = document.getElementById("section1");
-            let section2 = document.getElementById("section2");
-            let toggleButton = document.getElementById("togglessection");
-
-            if (section1.classList.contains('d-flex')) {
-                section1.classList.remove('d-flex');
-                section1.classList.add('d-none');
-                section2.classList.remove('d-none');
-                section2.classList.add('d-flex');
-            } else {
-                section2.classList.remove('d-flex');
-                section2.classList.add('d-none');
-                section1.classList.remove('d-none');
-                section1.classList.add('d-flex');
-            }
-
-            if (toggleButton.innerText === "Sell By Custom Details") {
-                toggleButton.innerText = "Sell By Added Details";
-            } else {
-                toggleButton.innerText = "Sell By Custom Details";
-            }
-        });
-
-        function calculateGrandTotal() {
-            var amount = parseFloat($('#amount').val()) || 0; 
-            var quantity = parseInt($('#quantity').val()) || 0; 
-            var gstRate = parseFloat($('#gst').val()) || 0; 
-            var discountPercent = parseFloat($('#discount').val()) || 0; 
-            var extraCharges = parseFloat($('#chaAmount').val()) || 0; 
-
-            var subtotal = amount * quantity;
-            var gstAmount = (subtotal * gstRate) / 100;
-            var totalBeforeDiscount = subtotal + gstAmount + extraCharges;
-            var discountAmount = (totalBeforeDiscount * discountPercent) / 100;
-            var grandTotal = totalBeforeDiscount - discountAmount;
-
-            $('#grand_total1').val(grandTotal.toFixed(2));
-        }
-
-        // Call calculateGrandTotal whenever quantity or amount changes
-        $('#quantity, #amount, #gst, #discount, #chaAmount').on('input', calculateGrandTotal);
-
-        // Call calculateGrandTotal initially to set the value on page load
-        $(document).ready(calculateGrandTotal);
-        
-        document.addEventListener("DOMContentLoaded", function() {
-            const selectElement = document.getElementById("buyer_details");
-            const inputElement = document.getElementById("invoice_maker");
-            const submitButton = document.getElementById("sell_submit");
-
-            function validateForm() {
-                const isOptionSelected = selectElement.value !== "Buyer Details";
-                const isInputFilled = inputElement.value.trim() !== "";
-
-                submitButton.disabled = !(isOptionSelected && isInputFilled);
-            }
-
-            selectElement.addEventListener("change", validateForm);
-            inputElement.addEventListener("input", validateForm);
-
-            // Initial validation check
-            validateForm();
-        });
         function handleSelectChange(select) {
             var value = select.value;
             if (value === "custom") {
@@ -714,7 +569,30 @@
                 customModal.show();
             }
         }
-        document.getElementById('buyer_details').addEventListener('change', function() {
+        document.getElementById("togglessection").addEventListener('click', function () {
+            let section1 = document.getElementById("section1");
+            let section2 = document.getElementById("section2");
+            let toggleButton = document.getElementById("togglessection");
+
+            section1.classList.toggle('d-none');
+            section2.classList.toggle('d-none');
+
+            section1.classList.toggle('d-flex');
+            section2.classList.toggle('d-flex');
+
+            section1.id = "temp";
+            section2.id = "section1";
+            document.getElementById("temp").id = "section2";
+
+            if (toggleButton.innerText === "Show Sell Return") {
+                toggleButton.innerText = "Add Sell Return";
+            } else {
+                toggleButton.innerText = "Show Sell Return";
+            }
+        });
+    </script>
+    <script>
+        document.getElementById('buyer_details').addEventListener('change', function () {
             var select = this;
             var selectDiv = document.getElementById('selectDiv');
             var buyerName = document.getElementById('buyer_name');
@@ -752,7 +630,7 @@
             }
         });
 
-        document.getElementById('saveCustomDetails').addEventListener('click', function() {
+        document.getElementById('saveCustomDetails').addEventListener('click', function () {
             var modalCustomItemInput = document.getElementById('modalCustomItemInput').value;
             var modalCustomContactInput = document.getElementById('modalCustomContactInput').value;
             var modalBillingAddressInput = document.getElementById('modalBillingAddressInput').value;
@@ -768,7 +646,6 @@
             var customModal = bootstrap.Modal.getInstance(document.getElementById('customModal'));
             customModal.hide();
         });
-        
     </script>
     <script>
         $(document).ready(function () {
@@ -805,25 +682,25 @@
                 });
             });
             // Handle the toggle icon click event
-            $(".toggle-icon").click(function() {
-            var select = $("#category_input");
-            var input = $("#custom_input");
-            
-            if (input.hasClass("d-none")) {
-                // Show input, hide select, and swap IDs
-                select.addClass("d-none").attr("id", "custom_input");
-                input.removeClass("d-none").attr("id", "category_input");
-            } else {
-                // Show select, hide input, and swap IDs
-                input.addClass("d-none").attr("id", "custom_input");
-                select.removeClass("d-none").attr("id", "category_input");
-            }
+            $(".toggle-icon").click(function () {
+                var select = $("#category_input");
+                var input = $("#custom_input");
+
+                if (input.hasClass("d-none")) {
+                    // Show input, hide select, and swap IDs
+                    select.addClass("d-none").attr("id", "custom_input");
+                    input.removeClass("d-none").attr("id", "category_input");
+                } else {
+                    // Show select, hide input, and swap IDs
+                    input.addClass("d-none").attr("id", "custom_input");
+                    select.removeClass("d-none").attr("id", "category_input");
+                }
             });
         });
     </script>
     <script>
-        $(document).ready(function() {
-            $('#toggle-checkbox').on('change', function() {
+        $(document).ready(function () {
+            $('#toggle-checkbox').on('change', function () {
                 var isChecked = $(this).is(':checked');
                 $('#toggle-input').prop('disabled', !isChecked);
                 $('#toggle-input').toggleClass('disabled-input', !isChecked);
@@ -836,7 +713,7 @@
                 let discount = parseFloat($('#discount').val()) || 0; // Get discount value from the input
                 let chaAmount = parseFloat($('#chaAmount').val()) || 0; // Get charged amount value from the input
 
-                $("#goods_table tbody tr").each(function() {
+                $("#goods_table tbody tr").each(function () {
                     let amount = parseFloat($(this).find('input[name="itemAmount"]').val()) || 0;
                     let quantity = parseInt($(this).find('input[name="itemQty"]').val()) || 0;
                     // let gst = parseFloat($(this).find('input[name="itemGst"]').val()) || 0;
@@ -856,13 +733,13 @@
             }
 
             // Event listener for discount input change
-            $('#discount').on('input', function() {
+            $('#discount').on('input', function () {
                 updateGrandTotal();
             });
-            $('#chaAmount').on('input', function() {
+            $('#chaAmount').on('input', function () {
                 updateGrandTotal();
             });
-            window.updateField = function(element, field) {
+            window.updateField = function (element, field) {
                 const targetId = $(element).data('id');
                 const newValue = $(element).val();
                 updateJsonData(targetId, field, newValue);
@@ -908,55 +785,6 @@
                 });
             });
 
-            $('#itemname').change(function() {
-                let selectedOption = $(this).find('option:selected');
-                let hsn = selectedOption.data('hsn');
-                let gst = selectedOption.data('gst');
-                let type = selectedOption.data('type');
-                let amount = selectedOption.data('amount');
-
-                $('#hsnsac').val(hsn);
-                $('#gst').val(gst);
-                $('#trackingType').val(type);
-                $('#amount').val(amount);
-            });
-
-            // When quantity input changes
-            $('#quantity').on('input', function () {
-                var stockCount = parseInt(this.value) || 0;
-                var formContainer = $('#formContainer');
-                var trackingType = $('#trackingType').val(); // Get tracking type from hidden input
-
-                formContainer.empty(); // Clear existing input fields
-
-                for (var i = 0; i < stockCount; i++) {
-                    var serialInputDisabled = (trackingType === 'serial' || trackingType === '') ? '' : 'disabled';
-                    var chasisInputDisabled = (trackingType === 'serial' || trackingType === '') ? 'disabled' : '';
-
-                    var formRow = `
-                        <div class="form-row col-12 mb-4">
-                            <div class="row g-2">
-                                <div class="col">
-                                    <input type="text" class="form-control border border-primary border-2 text-custom additional serial-input" name="serialNumber[]" placeholder="Serial Number" ${serialInputDisabled}>
-                                </div>
-                                <div class="col">
-                                    <input type="text" class="form-control border border-primary border-2 text-custom additional chasis-input" name="chasisNumber[]" placeholder="Chasis Number" ${chasisInputDisabled}>
-                                </div>
-                                <div class="col">
-                                    <input type="text" class="form-control border border-primary border-2 text-custom additional chasis-input" name="modelNumber[]" placeholder="Model Number" ${chasisInputDisabled}>
-                                </div>
-                                <div class="col">
-                                    <input type="text" class="form-control border border-primary border-2 text-custom additional chasis-input" name="motorNumber[]" placeholder="Motor Number" ${chasisInputDisabled}>
-                                </div>
-                                <div class="col">
-                                    <input type="text" class="form-control border border-primary border-2 text-custom additional chasis-input" name="color[]" placeholder="Color" ${chasisInputDisabled}>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    formContainer.append(formRow);
-                }
-            });
             $("#button_addgoodsDetails").click(function () {
                 var input = $("#category_input").val().trim();
                 if (input != "") {
@@ -1028,7 +856,6 @@
                                         `);
 
                                         updateGrandTotal();
-                                        // console.log(categorysToSend);
 
 
                                         // Add event listener to the newly added quantity, amount, and description inputs
@@ -1038,7 +865,7 @@
                                             // Get the closest row and the data-id attribute
                                             var row = $(this).closest('tr');
                                             var id = row.data('id');
-                                            
+
                                             var newQuantity = parseInt(row.find('input[name="itemQty"]').val()) || 0;
                                             var newAmount = parseFloat(row.find('input[name="itemAmount"]').val()) || 0;
                                             var newDescription = row.find('textarea[name="itemDesc"]').val() || ''; // Assuming description might be in a textarea
@@ -1074,134 +901,76 @@
                 }
             });
 
-            $('#paymentREF').on('click', function() {
+            $('#paymentREF').on('click', function () {
                 var referenceValue = $('#modalReferencesInput').val();
                 $('#paymentReferences').val(referenceValue);
                 $('#customInputField').modal('hide');
             });
-            
+            $("#sell_return").click(function (e) {
+                e.preventDefault();
 
-            // Function to collect Section 2 data
-            function collectFormContainerData() {
-                var formContainerData = [];
-                $('#formContainer .form-row').each(function() {
-                    var categoryName = $('#inputGroupSelect02').val();
-                    var hsn = $('#hsnsac').val();
-                    var gst = $('#gst').val();
-                    var amount = $('#amount').val();
-                    var quantity = $('#quantity').val();
-                    var trackingType = $('#trackingType').val();
-                    var quantityPerRow = quantity / $('#formContainer .form-row').length;
-                    var serialNumber = $(this).find('input[name="serialNumber[]"]').val();
-                    var chasisNumber = $(this).find('input[name="chasisNumber[]"]').val();
-                    var modelNumber = $(this).find('input[name="modelNumber[]"]').val();
-                    var motorNumber = $(this).find('input[name="motorNumber[]"]').val();
-                    var color = $(this).find('input[name="color[]"]').val();
+                var buyerName = $("#buyer_name").val();
+                var buyerBillAddress = $("#billing_field").val();
+                var buyerShipAddress = $("#shipadd_field").val();
+                var contactNumber = $("#contact_number").val();
+                var state = $("#state").val();
+                var gstin = $("#gst_field").val();
+                var discount = $("#discount").val();
+                var dated = $("#dated").val();
+                var description = $("#description").val();
+                var ReturnNo = $("#ReturnNo").val();
+                var pos = $("#pos").val();
+                var ReturnAmount = $("#ReturnAmount").val();
+                var totalAmount = $("#grand_total").val();
 
-                    var categoryObject = {
-                        category: categoryName,
-                        name: $('#itemname').val(),
-                        description: '',
-                        serialNumber: serialNumber,
-                        chasisNumber: chasisNumber,
-                        modelNumber: modelNumber,
-                        motorNumber: motorNumber,
-                        color: color,
-                        quantity: quantityPerRow,
-                        amount_per_unit: amount,
-                        gst: gst,
-                        trackingType: trackingType,
-                        'HSN/SAC': hsn
-                    };
 
-                    formContainerData.push(categoryObject);
-                });
+                // Assuming categorysToSend is defined and populated elsewhere in your code
+                if (typeof categorysToSend === 'undefined' || categorysToSend.length === 0) {
+                    alert("No categories to send.");
+                    return;
+                }
 
-                return formContainerData;
-            }
-
-            function collectCommonFields() {
-                return {
-                    discount: $("#discount").val(),
-                    buyer_name: $("#buyer_name").val(),
-                    buyer_billAddress: $("#billing_field").val(),
-                    buyer_shipAddress: $("#shipadd_field").val(),
-                    contact_number: $("#contact_number").val(),
-                    state: $("#state").val(),
-                    gstin: $("#gst_field").val(),
-                    invoice_maker: $("#invoice_maker").val(),
-                    delNoDate: $("#delNoDate").val(),
-                    paymentMethod2: $("#paymentMethod2").val(),
-                    paymentReferences: $("#paymentReferences").val(),
-                    refNoDate: $("#refNoDate").val(),
-                    othRef: $("#othRef").val(),
-                    buyOdrNo: $("#buyOdrNo").val(),
-                    dated: $("#dated").val(),
-                    disDocNo: $("#disDocNo").val(),
-                    delNoteDate: $("#delNoteDate").val(),
-                    hyp: $("#hyp").val(),
-                    des: $("#des").val(),
-                    terOfDel: $("#terOfDel").val(),
-                    extChaName: $("#extChaName").val(),
-                    chaAmount: $("#chaAmount").val(),
-                    receivedinput: $("#toggle-input").val(),
-                    delivery_number: $("#delivery_number").val(),
-                    delivery_date: $("#delivery_date").val()
+                var dataToSend = {
+                    sell_return: categorysToSend,
+                    discount: discount,
+                    buyer_name: buyerName,
+                    buyer_billAddress: buyerBillAddress,
+                    buyer_shipAddress: buyerShipAddress,
+                    contact_number: contactNumber,
+                    state: state,
+                    gstin: gstin,
+                    dated: dated,
+                    description: description,
+                    ReturnNo: ReturnNo,
+                    pos: pos,
+                    ReturnAmount: ReturnAmount,
+                    totalAmount: totalAmount
 
                 };
-            }
-
-            $("#sell_submit").click(function() {
-                var section1Visible = $('#section1').hasClass('d-flex');
-                var section2Visible = $('#section2').hasClass('d-flex');
-                var commonFields = collectCommonFields();
-                var dataToSend = { ...commonFields };
-
-                if (section1Visible) {
-                    if (categorysToSend.length > 0) {
-                        dataToSend.sell_submit = categorysToSend;
-                        dataToSend.grandTotal = $("#grand_total").val(); // Get grand total from section 1
-                    } else {
-                        alert("No categories to send in Section 1.");
-                        return;
-                    }
-                }
-
-                if (section2Visible) {
-                    var formContainerData = collectFormContainerData();
-                    if (formContainerData.length > 0) {
-                        dataToSend.sell_submit = formContainerData;
-                        dataToSend.grandTotal = $("#grand_total1").val(); // Get grand total from section 2
-                    } else {
-                        alert("No items in Section 2 to send.");
-                        return;
-                    }
-                }
 
                 $.ajax({
-                    url: "backend/sellBack.php",
+                    url: "sell_re.php",
                     method: "POST",
                     data: JSON.stringify(dataToSend),
                     contentType: "application/json",
-                    success: function(response) {
-                        console.log("Data sent to sell.php successfully.");
+                    success: function (response) {
+                        console.log("Data sent to sellReturn.php successfully.");
                         console.log(response);
+                        alert("Sell Return saved successfully.");
                         location.reload();
                     },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        console.error("Error sending data to sell.php: ", textStatus, errorThrown);
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error("Error sending data to sellReturn.php: ", textStatus, errorThrown);
                     }
                 });
             });
+
+
         });
 
-        
+
     </script>
-    
-        
-        
-        
-               
+
 </body>
 
 </html>

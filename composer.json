@@ -4,6 +4,7 @@
         "tecnickcom/tcpdf": "^6.7",
         "spipu/html2pdf": "^5.2",
         "picqer/php-barcode-generator": "^2.4",
-        "setasign/fpdi-fpdf": "^2.3"
+        "setasign/fpdi-fpdf": "^2.3",
+        "phpmailer/phpmailer": "^6.9"
     }
 }

@@ -1,4 +1,11 @@
 <?php 
+    session_start();
+
+    // Check if the user is verified
+    if (!isset($_SESSION['verified']) || $_SESSION['verified'] !== true) {
+        header("Location: OTP.php");
+        exit();
+    }
     include 'backend/db_connection.php';
     // Query to fetch user from database
     // Get current year and month
@@ -23,7 +30,11 @@
     <link rel="stylesheet" href="css/style.css">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-    <!-- <style>*{border:1px solid red;}</style> -->
+    <style>
+        ::-webkit-scrollbar {width: 8px;}
+        ::-webkit-scrollbar-thumb {background-color: #006769;border-radius:50px;}
+        ::-webkit-scrollbar-track {background-color:gray;border-radius:50px;}
+    </style>
 </head>
 
 <body>
@@ -36,46 +47,101 @@
                     <span class="fs-5">A S ENTERPRISE</span>
                 </a>
                 <hr>
-                <ul class="nav nav-pills mb-auto d-flex flex-column list-unstyled ps-0">
-                    <li class="nav-item">
-                        <a href="./sell.php" class="nav-link d-flex align-items-center my-1  p-2 text-light"
-                            aria-current="page"><i
-                                class="fa-solid fa-file-invoice-dollar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
-                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">SELL</span></a>
-                    </li>
-                    <li>
-                        <a href="./add.php" class="nav-link d-flex align-items-center my-1  p-2 text-light"><i
-                                class=" fa-solid fa-truck-ramp-box me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
-                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">ADD PRODUCTS</span></a>
-                    </li>
-                    <li>
-                        <a href="./purchase.php" class="nav-link d-flex align-items-center my-1  p-2 text-light"><i
-                                class="fa-solid fa-cart-shopping me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
-                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">ADD Purchase</span></a>
-                    </li>
-                    <li>
-                        <a href="./items.php" class="nav-link d-flex align-items-center my-1  p-2 text-light"><i
-                                class=" fa-solid fa-shapes me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
-                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">Items</span></a>
-                    </li>
-                    <li>
-                        <a href="./parties.php" class="nav-link d-flex align-items-center my-1  p-2 text-light"><i
-                                class=" fa-solid fa-people-group me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
-                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">Parties</span></a>
-                    </li>
-                    <li>
-                        <a href="#" class="nav-link d-flex align-items-center my-1  p-2 text-light" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="false"><i
-                                class="fa-solid fa-plus me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
-                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">Reports</span></a>
-                        <div class="collapse" id="home-collapse" style="">
-                        <ul class="btn-toggle-nav list-unstyled fw-normal ms-5 pb-1 small">
-                            <li><a href="./sellReport.php" class="fs-7 nav-link d-flex align-items-center p-2 text-light"><i class="fa-solid fa-chart-bar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center" style=" height: 20px;width:20px"></i> <span class="d-none d-lg-block">Sell Report</span></a></li>
-                            <li><a href="./purchaseReport.php" class="fs-7 nav-link d-flex align-items-center p-2 text-light"><i class="fa-solid fa-chart-bar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center" style=" height: 20px;width:20px"></i> <span class="d-none d-lg-block">Purchase Report</span></a></li>
-                            <li><a href="./gstReport.php" class="fs-7 nav-link d-flex align-items-center p-2 text-light"><i class="fa-solid fa-chart-bar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center" style=" height: 20px;width:20px"></i> <span class="d-none d-lg-block">GST Report</span></a></li>
-                        </ul>
-                        </div>
-                    </li>
+                <ul class="overflow-auto bd-sidebar nav nav-pills mb-auto d-flex flex-column list-unstyled ps-0" >
+                    <div style="height: calc(100vh - 50px + 30px);">
+                        <li class="nav-item">
+                            <a href="./sell.php" class="nav-link d-flex align-items-center me-1  p-2 text-light"
+                                aria-current="page"><i
+                                    class="fa-solid fa-file-invoice-dollar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
+                                    style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">Sell</span></a>
+                        </li>
+                        <li>
+                            <a href="./sellReturn.php" class="nav-link d-flex align-items-center me-1 p-2 text-light"><i
+                                    class=" fa-solid fa-file-import me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
+                                    style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">Sell Return</span></a>
+                        </li>
+                        <li>
+                            <a href="./challan.php" class="nav-link d-flex align-items-center me-1 p-2 text-light"><i
+                                    class=" fa-solid fa-truck me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
+                                    style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">Delivery Challan</span></a>
+                        </li>
+                        <li>
+                            <a href="./add.php" class="nav-link d-flex align-items-center me-1 p-2 text-light"><i
+                                    class=" fa-solid fa-truck-ramp-box me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
+                                    style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">Add Products</span></a>
+                        </li>
+                        <li>
+                            <a href="./purchase.php" class="nav-link d-flex align-items-center me-1 p-2 text-light"><i
+                                    class="fa-solid fa-cart-shopping me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
+                                    style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">Add Purchase</span></a>
+                        </li>
+                        <li>
+                            <a href="./purchaseReturn.php" class="nav-link d-flex align-items-center me-1 p-2 text-light"><i
+                                    class="fa-solid fa-file-export me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
+                                    style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">Purchase Return</span></a>
+                        </li>
+                        <li>
+                            <a href="./items.php" class="nav-link d-flex align-items-center me-1 p-2 text-light"><i
+                                    class=" fa-solid fa-shapes me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
+                                    style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">Items</span></a>
+                        </li>
+                        <li>
+                            <a href="./parties.php" class="nav-link d-flex align-items-center me-1 p-2 text-light"><i
+                                    class=" fa-solid fa-people-group me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
+                                    style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">Parties</span></a>
+                        </li>
+                        <li>
+                            <a href="./cashBank.php" class="nav-link d-flex align-items-center me-1 p-2 text-light"><i
+                                    class=" fa-solid fa-building-columns me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
+                                    style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">Cash & Bank</span></a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link d-flex align-items-center me-1 p-2 text-light" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="false">
+                                <i class="fa-solid fa-plus me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center" style="height: 30px;width:30px"></i>
+                                <span class="d-none d-lg-block">Reports <i class="fa-solid fa-caret-down"></i></span>
+                            </a>
+                            <div class="collapse" id="home-collapse">
+                                <ul class="btn-toggle-nav list-unstyled fw-normal ms-5 p-1 small">
+                                    <li>
+                                        <a href="./sellReport.php" class="fs-7 nav-link d-flex align-items-center p-2 text-light">
+                                            <i class="fa-solid fa-chart-bar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center" style="height: 20px;width:20px"></i>
+                                            <span class="d-none d-lg-block">Sell Report</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="./purchaseReport.php" class="fs-7 nav-link d-flex align-items-center p-2 text-light">
+                                            <i class="fa-solid fa-chart-bar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center" style="height: 20px;width:20px"></i>
+                                            <span class="d-none d-lg-block">Purchase Report</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="fs-7 nav-link d-flex align-items-center p-2 text-light" data-bs-toggle="collapse" data-bs-target="#gst-collapse" aria-expanded="false">
+                                            <i class="fa-solid fa-file-invoice-dollar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center" style="height: 20px;width:20px"></i>
+                                            <span class="d-none d-lg-block">GST <i class="fa-solid fa-caret-down"></i></span>
+                                            
+                                        </a>
+                                        <div class="collapse" id="gst-collapse">
+                                            <ul class="list-unstyled ms-5 pb-1 small">
+                                                <li>
+                                                    <a class="nav-link d-flex align-items-center p-2 text-light" href="./gstReport.php?table=sell">
+                                                        <i class="fa-solid fa-chart-bar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center" style="height: 20px;width:20px"></i>
+                                                        <span class="d-none d-lg-block">GSTR 1</span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="nav-link d-flex align-items-center p-2 text-light" href="./gstReport.php?table=purchase">
+                                                        <i class="fa-solid fa-chart-bar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center" style="height: 20px;width:20px"></i>
+                                                        <span class="d-none d-lg-block">GSTR 2</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
 
+                    </div>
                 </ul>
                 <hr>
                 <div class="dropdown">
@@ -130,13 +196,27 @@
             <div class="container-fluid flex-grow-1" id="chnageSection">
                 <div class="d-flex justify-content-center align-items-center flex-column text-center p-0"
                     style="width:100%;height:100%">
+                    <div class="container-sm d-flex justify-content-center align-items-center">
+                        <div class="card text-bg-primary m-3" style="width:20rem;">
+                            <div class="card-header">A S ENTERPRISE</div>
+                            <div class="card-body bg-light">
+                                <a href="./index.php"type="button" class="active btn btn-outline-primary">Active</a>
+                            </div>
+                        </div>
+                        <div class="card text-bg-primary m-3" style="width:20rem;">
+                            <div class="card-header">A S AUTO PARTS</div>
+                            <div class="card-body bg-light">
+                                <a href="./ASAUTOPARTS/index.php"type="button" class="btn btn-outline-primary">Active</a>
+                            </div>
+                        </div>
+                    </div>
                     <div class="container-fluid row row-cols-4 justify-content-md-center gap-3">
                         <div class=" col card text-primary">
                             <div class="card-body">
                                 <h5 class="card-title"><i class="fa-solid fa-file-export" style="color: #00ff88;"></i> Sell</h5>
                                 <?php
                                     // SQL query to select the total amount for the current month
-                                    $sql = "SELECT SUM(goodsAmount) AS total_amount FROM sell WHERE YEAR(STR_TO_DATE(dateTime, '%Y%m%d-%H%i%s')) = $currentYear AND MONTH(STR_TO_DATE(dateTime, '%Y%m%d-%H%i%s')) = $currentMonth";
+                                    $sql = "SELECT SUM(goodsAmount) AS total_amount FROM sell WHERE YEAR(STR_TO_DATE(dateTime, '%Y.%m.%d-%H:%i:%s')) = $currentYear AND MONTH(STR_TO_DATE(dateTime, '%Y.%m.%d-%H:%i:%s')) = $currentMonth";
                                     $result = $conn->query($sql);
                                     // Fetch the result
                                     $row = $result->fetch_assoc();
@@ -144,7 +224,7 @@
                                 ?>
                                 <span class="fs-4"><i class="fa-solid fa-indian-rupee-sign" style="color: #006769;"></i>&nbsp;<?php echo ($totalSaleAmount === 0) ? 0.0 : $totalSaleAmount ;  ?></span>
                                 <p class="card-text"><?php echo "Month (".date('M').")";?></p>
-                                <a href="#" class="btn btn-primary"><i class="fa-solid fa-file-arrow-down"></i>&nbsp;Report</a>
+                                <a href="./generate_pdf.php?table=sell" class="btn btn-primary"><i class="fa-solid fa-file-arrow-down"></i>&nbsp;Report</a>
                             </div>
                         </div>
                         <div class=" col card text-primary">
@@ -152,7 +232,7 @@
                                 <h5 class="card-title"><i class="fa-solid fa-cart-shopping" style="color: #ff0000;"></i> Purchase</h5>
                                 <?php
                                     // SQL query to select the total amount for the current month
-                                    $sql = "SELECT SUM(goodsAmount) AS total_amount FROM purchase WHERE YEAR(STR_TO_DATE(dateTime, '%Y%m%d-%H%i%s')) = $currentYear AND MONTH(STR_TO_DATE(dateTime, '%Y%m%d-%H%i%s')) = $currentMonth";
+                                    $sql = "SELECT SUM(goodsAmount) AS total_amount FROM purchase WHERE YEAR(STR_TO_DATE(dateTime, '%Y.%m.%d-%H:%i:%s')) = $currentYear AND MONTH(STR_TO_DATE(dateTime, '%Y.%m.%d-%H:%i:%s')) = $currentMonth";
                                     $result = $conn->query($sql);
                                     // Fetch the result
                                     $row = $result->fetch_assoc();
@@ -160,7 +240,7 @@
                                 ?>
                                 <span class="fs-4"><i class="fa-solid fa-indian-rupee-sign" style="color: #006769;"></i>&nbsp;<?php echo ($totalPayAmount === 0) ? 0.0 : $totalPayAmount ; ?></span>
                                 <p class="card-text"><?php echo "Month (".date('M').")";?></p>
-                                <a href="#" class="btn btn-primary"><i class="fa-solid fa-file-arrow-down"></i>&nbsp;Report</a>
+                                <a href="./generate_pdf.php?table=purchase" class="btn btn-primary"><i class="fa-solid fa-file-arrow-down"></i>&nbsp;Report</a>
                             </div>
                         </div>
                         <div class=" col card text-primary">
@@ -168,7 +248,7 @@
                                 <h5 class="card-title"><i class="fa-solid fa-wallet" style="color: #00ff88;"></i> Receiving Details</h5>
                                 <?php
                                     // SQL query to select the total amount for the current month
-                                    $sql = "SELECT SUM(totalAmount - clearAmount) AS total_difference FROM parties WHERE type = 'sale'";
+                                    $sql = "SELECT SUM(totalAmount - clearAmount) AS total_difference FROM parties WHERE type IN ('sale', 'sale&purchase')";
                                     $result = $conn->query($sql);
                                     // Fetch the result
                                     $row = $result->fetch_assoc();
@@ -181,7 +261,7 @@
                         </div>
                         <!-- Payment receive dialog modal -->
                          <?php 
-                            $sql = "SELECT id, partiesName FROM parties WHERE type = 'sale'";
+                           $sql = "SELECT id, partiesName FROM parties WHERE type IN ('sale', 'sale&purchase')";
                             // Execute the query
                             $result = $conn->query($sql);
                             // Initialize an empty array to hold options
@@ -199,7 +279,7 @@
                         <div class="modal fade" id="paymentReceiveModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
-                                    <div class="modal-header">
+                                    <div class="modal-header bg-primary text-light">
                                         <h1 class="modal-title fs-5" >Received Amount</h1>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
@@ -211,6 +291,8 @@
                                             </select>
                                             <button class="btn btn-outline-primary border-2" id="showButton" type="button">SHOW</button>
                                         </div>
+                                        <input type="hidden" id="receivepartiesName">
+                                        <input type="hidden" id="receivepartiesPhoneNumber">
                                         <div class="d-flex justify-content-between p-4 text-primary">
                                             <span class="text-start">Total amount</span>
                                             <span class="text-end" id="totalAmount"><i class="fa-solid fa-indian-rupee-sign" style="color: #006769;"></i>&nbsp;0000</span>
@@ -223,12 +305,14 @@
                                             <span class="text-start">Due amount</span>
                                             <span class="text-end" id="dueAmount"><i class="fa-solid fa-indian-rupee-sign" style="color: #006769;"></i>&nbsp;0000</span>
                                         </div>
-                                        <select class="form-select border-primary border-2" id="paymentMethod" aria-label="Default select example">
-                                            <option selected>Payment Method</option>
-                                            <option value="1">Cash</option>
-                                            <option value="2">Cheque</option>
-                                            <option value="3">Account</option>
+                                        <select class="form-select border-primary border-2" id="paymentMethod" aria-label="Default select example" onchange="handlePaymentMethodChange(this)">
+                                            <option selected value="">Payment Method</option>
+                                            <option value="Cash">Cash</option>
+                                            <option value="Cheque">Cheque</option>
+                                            <option value="Account">Account</option>
                                         </select>
+
+
                                         </br>
                                         <div class="input-group mb-3">
                                             <span class="input-group-text bg-primary text-light boprder-2 border-primary" id="inputGroup-sizing-default">Amount</span>
@@ -236,7 +320,7 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary" id="updateButton">Save</button>
+                                        <button type="button" class="w-100 btn btn-primary rounded-5" id="updateButton">Save</button>
                                     </div>
                                 </div>
                             </div>
@@ -246,7 +330,7 @@
                                 <h5 class="card-title"><i class="fa-solid fa-wallet" style="color: #ff0000;"></i> Paying Details</h5>
                                 <?php
                                     // SQL query to select the total amount for the current month
-                                    $sql = "SELECT SUM(totalAmount - clearAmount) AS total_difference FROM parties WHERE type = 'purchase'";
+                                    $sql = "SELECT SUM(totalAmount - clearAmount) AS total_difference FROM parties WHERE type IN ('purchase', 'sale&purchase')";
                                     $result = $conn->query($sql);
                                     // Fetch the result
                                     $row = $result->fetch_assoc();
@@ -259,7 +343,7 @@
                         </div></br>
                         <!-- Payment pay dialog modal -->
                         <?php 
-                            $sql = "SELECT id, partiesName FROM parties WHERE type = 'purchase'";
+                            $sql = "SELECT id, partiesName FROM parties WHERE type IN ('purchase', 'sale&purchase')";
                             // Execute the query
                             $result = $conn->query($sql);
                             // Initialize an empty array to hold options
@@ -277,7 +361,7 @@
                         <div class="modal fade" id="paymentPayModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
-                                    <div class="modal-header">
+                                    <div class="modal-header bg-primary text-light">
                                         <h1 class="modal-title fs-5" >Paying Amount</h1>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
@@ -289,6 +373,8 @@
                                             </select>
                                             <button class="btn btn-outline-primary border-2" id="showButton2" type="button">SHOW</button>
                                         </div>
+                                        <input type="hidden" id="payingpartiesName">
+                                        <input type="hidden" id="payingpartiesPhoneNumber">
                                         <div class="d-flex justify-content-between p-4 text-primary">
                                             <span class="text-start">Total amount</span>
                                             <span class="text-end" id="totalAmount2"><i class="fa-solid fa-indian-rupee-sign" style="color: #006769;"></i>&nbsp;0000</span>
@@ -301,12 +387,13 @@
                                             <span class="text-start">Due amount</span>
                                             <span class="text-end" id="dueAmount2"><i class="fa-solid fa-indian-rupee-sign" style="color: #006769;"></i>&nbsp;0000</span>
                                         </div>
-                                        <select class="form-select border-primary border-2" id="paymentMethod2" aria-label="Default select example">
-                                            <option selected>Payment Method</option>
-                                            <option value="1">Cash</option>
-                                            <option value="2">Cheque</option>
-                                            <option value="3">Account</option>
+                                        <select class="form-select border-primary border-2" id="paymentMethod2"aria-label="Default select example" onchange="handlePaymentMethodChange(this)">
+                                            <option selected value="">Payment Method</option>
+                                            <option value="Cash">Cash</option>
+                                            <option value="Cheque">Cheque</option>
+                                            <option value="Account">Account</option>
                                         </select>
+                                        
                                         </br>
                                         <div class="input-group mb-3">
                                             <span class="input-group-text bg-primary text-light boprder-2 border-primary" id="inputGroup-sizing-default">Amount</span>
@@ -314,14 +401,36 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary" id="updateButton2">Save</button>
+                                        <button type="button" class="w-100 btn btn-primary rounded-5" id="updateButton2">Save</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col border border-primary border-5 rounded "id="chart_div" style="width:auto; height:auto;"></div>
                     </div>
-
+                    <input type="hidden" id="paymentReferences">
+                    <!-- payment reference -->
+                    <div class="modal fade" id="customInputField" tabindex="-1" aria-labelledby="customModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="customModalLabel">Add Payment References</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-4">
+                                        <input type="text"
+                                            class="form-control border border-primary border-2 text-custom"
+                                            name="References" id="modalReferencesInput" placeholder="References" aria-label="References">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" id="paymentREF">SAVE</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <!-- Modal -->
                     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
                         tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -368,7 +477,7 @@
 
     <?php
         // SQL query to fetch the monthly sales data
-        $sql = "SELECT DATE_FORMAT(STR_TO_DATE(dateTime, '%Y%m%d-%H%i%s'), '%b') AS month_name, SUM(goodsQuantity) AS total_sales FROM sell WHERE YEAR(STR_TO_DATE(dateTime, '%Y%m%d-%H%i%s')) = $currentYear GROUP BY DATE_FORMAT(STR_TO_DATE(dateTime, '%Y%m%d-%H%i%s'), '%Y-%m') ORDER BY STR_TO_DATE(dateTime, '%Y%m%d-%H%i%s')";
+        $sql = "SELECT DATE_FORMAT(STR_TO_DATE(dateTime, '%Y.%m.%d-%H:%i:%s'), '%b') AS month_name, SUM(goodsQuantity) AS total_sales FROM sell WHERE YEAR(STR_TO_DATE(dateTime, '%Y.%m.%d-%H:%i:%s')) = $currentYear GROUP BY DATE_FORMAT(STR_TO_DATE(dateTime, '%Y%m%d-%H%i%s'), '%Y-%m') ORDER BY STR_TO_DATE(dateTime, '%Y%m%d-%H%i%s')";
         $result = $conn->query($sql);
         // Initialize an array with all months and sales set to 0
         $allMonths = [
@@ -425,6 +534,14 @@
             var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
             chart.draw(data, options);
         }
+        function handlePaymentMethodChange(select) {
+            var value = select.value;
+            var customModal = new bootstrap.Modal(document.getElementById('customInputField'));
+
+            if (value === "Cheque" || value === "Account") {
+                customModal.show();
+            }
+        }
         $(document).ready(function() {
             $('#showButton').click(function() {
                 // Get selected party ID
@@ -443,6 +560,8 @@
                                 alert(response.error);
                             } else {
                                 // Update the HTML with the response data
+                                $('#receivepartiesName').val(response.partiesName);
+                                $('#receivepartiesPhoneNumber').val(response.phoneNumber);
                                 $('#totalAmount').html('<i class="fa-solid fa-indian-rupee-sign" style="color: #006769;"></i>&nbsp;' + response.totalAmount);
                                 $('#clearAmount').html('<i class="fa-solid fa-indian-rupee-sign" style="color: #006769;"></i>&nbsp;' + response.clearAmount);
                                 $('#dueAmount').html('<i class="fa-solid fa-indian-rupee-sign" style="color: #006769;"></i>&nbsp;' + response.dueAmount);
@@ -480,6 +599,8 @@
                                 alert(response.error);
                             } else {
                                 // Update the HTML with the response data
+                                $('#payingpartiesName').val(response.partiesName);
+                                $('#payingpartiesPhoneNumber').val(response.phoneNumber);
                                 $('#totalAmount2').html('<i class="fa-solid fa-indian-rupee-sign" style="color: #006769;"></i>&nbsp;' + response.totalAmount);
                                 $('#clearAmount2').html('<i class="fa-solid fa-indian-rupee-sign" style="color: #006769;"></i>&nbsp;' + response.clearAmount);
                                 $('#dueAmount2').html('<i class="fa-solid fa-indian-rupee-sign" style="color: #006769;"></i>&nbsp;' + response.dueAmount);
@@ -502,8 +623,11 @@
             });
             $('#updateButton').click(function() {
                 var partyId = $('#receiveInput').val();
+                var partyName = $('#receivepartiesName').val();
+                var phoneNumber = $('#receivepartiesPhoneNumber').val();
                 var dueAmountValue = $('#dueAmountValue').val();
                 var paymentMethod = $('#paymentMethod').val(); // Assuming this is a select element
+                var paymentReferences = $('#paymentReferences').val();
 
                 // Check if all necessary fields are filled
                 if (partyId && paymentMethod) {
@@ -512,8 +636,11 @@
                         type: 'POST',
                         data: {
                             id: partyId,
+                            partyName: partyName,
+                            phoneNumber: phoneNumber,
                             dueAmount: dueAmountValue,
-                            method: paymentMethod
+                            method: paymentMethod,
+                            ref: paymentReferences
                         },
                         dataType: 'json', // Expect JSON response
                         success: function(response) {
@@ -521,7 +648,6 @@
                                 alert('Amount updated successfully.');
                                 // Refresh the page
                                 window.location.reload();
-                                // Optionally, you could also update the UI with new values here
                             } else {
                                 alert('Failed to update amount: ' + response.error);
                             }
@@ -534,10 +660,14 @@
                     alert('Please select a party and enter an amount.');
                 }
             });
+
             $('#updateButton2').click(function() {
                 var partyId = $('#receiveInput2').val();
+                var partyName = $('#payingpartiesName').val();
+                var phoneNumber = $('#payingpartiesPhoneNumber').val();
                 var dueAmountValue = $('#dueAmountValue2').val();
                 var paymentMethod = $('#paymentMethod2').val(); // Assuming this is a select element
+                var paymentReferences = $('#paymentReferences').val();
 
                 // Check if all necessary fields are filled
                 if (partyId && paymentMethod) {
@@ -546,8 +676,11 @@
                         type: 'POST',
                         data: {
                             id: partyId,
+                            partyName: partyName,
+                            phoneNumber: phoneNumber,
                             dueAmount: dueAmountValue,
-                            method: paymentMethod
+                            method: paymentMethod,
+                            ref: paymentReferences
                         },
                         dataType: 'json', // Expect JSON response
                         success: function(response) {
@@ -555,8 +688,8 @@
                                 alert('Amount updated successfully.');
                                 // Refresh the page
                                 window.location.reload();
-                                // Optionally, you could also update the UI with new values here
                             } else {
+                                console.log(response.error);
                                 alert('Failed to update amount: ' + response.error);
                             }
                         },
@@ -567,6 +700,14 @@
                 } else {
                     alert('Please select a party and enter an amount.');
                 }
+            });
+
+
+            
+            $('#paymentREF').on('click', function() {
+                var referenceValue = $('#modalReferencesInput').val();
+                $('#paymentReferences').val(referenceValue);
+                $('#customInputField').modal('hide');
             });
 
         });

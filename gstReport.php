@@ -1,186 +1,418 @@
-<?php 
-    include 'backend/db_connection.php';
-    // Query to fetch user from database
-    // Get current year and month
-    $currentYear = date('Y');
-    $currentMonth = date('m');
-    $query = "SELECT * FROM users WHERE id = '1'";
-    $result = mysqli_query($conn, $query);
+<?php
+// Start output buffering
+ob_start();
+
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Include database connection
+include "backend/db_connection.php";
+require 'vendor/autoload.php';
+
+$tableName = isset($_GET['table']) ? $_GET['table'] : 'sell'; // Default to 'sell' if not provided
+
+// Ensure table name is valid to prevent SQL injection
+$validTables = ['sell', 'purchase'];
+if (!in_array($tableName, $validTables)) {
+    die('Invalid table name');
+}
+// Fetch company details
+$sql = "SELECT * FROM companydetails";
+$result1 = $conn->query($sql);
+if ($row = $result1->fetch_assoc()) {
+    $CompanyName = $row['CompanyName'];
+    $CompanyAddress = $row['CompanyAddress'];
+    $CompanyContactDetails = 'Phone Number: ' . $row['CompanyPhoneNumber'] . ', Email Id: ' . $row['CompanyEmailid'];
+    $CompanyGSTIN = $row['CompanyGSTIN'];
+    $CompanyStateCode = $row['CompanyStateCode'];
+}
+
+// Create a custom TCPDF class
+class MYPDF extends TCPDF {
+    private $CompanyName;
+    private $CompanyAddress;
+    private $CompanyContactDetails;
+    private $CompanyGSTIN;
+    private $CompanyStateCode;
+
+    public function __construct($tableName, $CompanyName, $CompanyAddress, $CompanyContactDetails, $CompanyGSTIN, $CompanyStateCode) {
+        parent::__construct();
+        $this->CompanyName = $CompanyName;
+        $this->CompanyAddress = $CompanyAddress;
+        $this->CompanyContactDetails = $CompanyContactDetails;
+        $this->CompanyGSTIN = $CompanyGSTIN;
+        $this->CompanyStateCode = $CompanyStateCode;
+        $this->tableName = $tableName;
+
+    }
+
+    public function Header() {
+        switch ($this->tableName) {
+            case 'sell':
+                $title = 'Sell';
+                $nameReport = 'GSTR 1';
+                break;
+            case 'purchase':
+                $title = 'Purchase';
+                $nameReport = 'GSTR 2';
+                break;
+            default:
+                $title = $this->tableName . ' Report';
+                break;
+        }
+        if ($this->getPage() == 1) {
+            $this->SetFont('dejavusans', 'B', 12);
+            $this->Cell(0, 10, $this->CompanyName, 0, 1, 'L');
+            $this->SetFont('dejavusans', '', 10);
+            $this->Cell(0, 5, 'Company Address: ' . $this->CompanyAddress, 0, 1, 'L');
+            $this->Cell(0, 5, $this->CompanyContactDetails, 0, 1, 'L');
+            $this->Cell(0, 5, 'GSTIN: ' . $this->CompanyGSTIN, 0, 1, 'L');
+            $this->Cell(0, 5, 'State Code: ' . $this->CompanyStateCode, 0, 1, 'L');
+
+            $this->SetFont('dejavusans', 'B', 12);
+            $this->Cell(0, 10, ''.$nameReport.' Report', 0, 1, 'C');
+
+            $this->SetFont('dejavusans', '', 10);
+            $this->Cell(($this->GetPageWidth() / 2),7,'1. GSTIN',1,0,'L');
+            $this->Cell(0,7, $this->CompanyGSTIN,1,1,'L');
+            $this->Cell(($this->GetPageWidth() / 2),7,'2.a Legal name of the registered person',1,0,'L');
+            $this->Cell(0,7, $this->CompanyName,1,1,'L');
+            $this->Cell(($this->GetPageWidth() / 2),7,'2.b Trade name, if any',1,0,'L');
+            $this->Cell(0,7,'',1,1,'L');
+            $this->Cell(($this->GetPageWidth() / 2),7,'3.a Aggregate Turnover in the preceeding Financial Year.',1,0,'L');
+            $this->Cell(0,7,'',1,1,'L');
+            $this->Cell(($this->GetPageWidth() / 2),7,'3.b Aggregate Turnover, April to June 2017',1,0,'L');
+            $this->Cell(0,7,'',1,1,'L');
+            $this->Cell(0,7,'','B',1,'L');
+            $this->ln(2);
+            $this->SetFont('', 'B', 10);
+            $this->Cell(0,7, $title,'',1,'C');
+
+            $this->Ln(10);
+        }
+    }
+
+    public function Footer() {
+        $this->SetFont('dejavusans', 'I', 8);
+        $this->SetY(-15);
+        $this->Cell(0, 5, "Page " . $this->getAliasNumPage() . "/" . $this->getAliasNbPages(), 0, 0, 'R');
+    }
+}
+
+// Create new PDF document
+$pdf = new MYPDF($tableName,$CompanyName, $CompanyAddress, $CompanyContactDetails, $CompanyGSTIN, $CompanyStateCode);
+
+switch ($tableName) {
+    case 'sell':
+        $title = 'Sell';
+        $nameReport = 'GSTR 1';
+        break;
+    case 'purchase':
+        $title = 'Purchase';
+        $nameReport = 'GSTR 2';
+        break;
+    default:
+        $title = $this->tableName . ' Report';
+        break;
+}
+// Set document information
+$pdf->SetCreator(PDF_CREATOR);
+$pdf->SetAuthor('A S ENTERPRISE');
+$pdf->SetTitle(''.$nameReport.'_Report_' . date('Y.m.d'));
+$pdf->SetSubject(''.$nameReport.' Report');
+$pdf->SetKeywords('TCPDF, PDF, '.$nameReport.', Report');
+
+// Set margins
+$pdf->SetMargins(2, 10, 2);
+$pdf->SetHeaderMargin(3);
+$pdf->SetFooterMargin(0);
+
+// Set auto page breaks
+$pdf->SetAutoPageBreak(TRUE, 10);
+
+// Set font
+$pdf->SetFont('dejavusans', '', 6);
+
+// Add a page
+$pdf->AddPage();
+$width = $pdf->GetPageWidth() / 12 - 2;
+$pdf->SetY(100);
+
+$pdf->Cell($width,7*2,'GSTIN/',1,0,'C');
+$pdf->Cell($width*4,7,'Invoice details',1,0,'C');
+$pdf->Cell($width,7*2,'Rate',1,0,'C');
+$pdf->Cell($width,7*2,'Cess',1,0,'C');
+$pdf->Cell($width,7*2,'Taxable',1,0,'C');
+$pdf->Cell($width*4,7,'Amount',1,0,'C');
+$pdf->Cell(0,7*2,'Place of',1,1,'C');
+
+$pdf->SetY(107);
+
+$pdf->Cell($width,7,'UIN',0,0,'C');
+$pdf->Cell($width,7,'Name',1,0,'C');
+$pdf->Cell($width,7,'Inv No.',1,0,'C');
+$pdf->Cell($width,7,'Date',1,0,'C');
+$pdf->Cell($width,7,'Value',1,0,'C');
+$pdf->Cell($width,7,'',0,0,'C');
+$pdf->Cell($width,7,'Rate',0,0,'C');
+$pdf->Cell($width,7,'value',0,0,'C');
+$pdf->Cell($width,7,'ITC',1,0,'C');
+$pdf->Cell($width,7,'CGST',1,0,'C');
+$pdf->Cell($width,7,'SGST',1,0,'C');
+$pdf->Cell($width,7,'Cess',1,0,'C');
+$pdf->Cell(0,7,'Supply',0,1,'C');
+
+// Table Data
+$sql = "SELECT * FROM $tableName";
+$result = $conn->query($sql);
+$pdf->SetY(114);
+$defaultHeight = 5; // Set default height for MultiCells
+$footerHeight = 20;
+
+while ($row = $result->fetch_assoc()) {
+    // Replace with your actual field names
+    $buyerName= $row['buyerName'];
+    $gstin = $row['gstin'];
+    $dateTime = $row['dateTime'];
+    $dateObject = DateTime::createFromFormat('Y.m.d-H:i:s', $dateTime);
+    if ($dateObject) {
+        $formattedDate = $dateObject->format('Y.m.d'); // Format date as YYYY.MM.DD
+    } else {
+        $formattedDate = 'Invalid Date';
+    }
+    $stateNameCode = $row['stateNameCode'];
+    preg_match('/(\d+)$/', $stateNameCode, $matches);
+    if (!empty($matches)) {
+        $lastNumbers = $matches[1]; // The matched numbers at the end
+        $compressedStateCode = 'c-' . $lastNumbers;
+    } else {
+        $compressedStateCode = 'c-unknown';
+    }
+    $InvoiceNumber = $row['invoiceNumber'];
+    $goodsAmount = isset($row['goodsAmount']) ? floatval($row['goodsAmount']) : 0.0;
+    $goodsQuantity = isset($row['goodsQuantity']) ? intval($row['goodsQuantity']) : 0;
+    $GST = isset($row['GST']) ? floatval($row['GST']) : 0.0;
+    $Cess = isset($row['cess']) ? floatval($row['cess']) : 0.0;
+    $ITC = isset($row['itc']) ? floatval($row['itc']) : 0.0;
+    $value = $goodsAmount * $goodsQuantity;
+    $tax= ($value * ($GST / 100));
+    $taxValue = ($value * ($GST / 100));
+    $taxPlusValue = $value + $taxValue;
+
+    // Store heights
+    $heights = [];
+    // $width = 20; // assuming the cell width is 20, adjust accordingly
+
+    // Calculate the heights of each MultiCell based on the content
+    $heights[] = $pdf->getStringHeight($width, $gstin);
+    $heights[] = $pdf->getStringHeight($width, $buyerName);
+    $heights[] = $pdf->getStringHeight($width, $InvoiceNumber);
+    $heights[] = $pdf->getStringHeight($width, $formattedDate);
+    $heights[] = $pdf->getStringHeight($width, round($taxPlusValue, 1));
+    $heights[] = $pdf->getStringHeight($width, $GST);
+    $heights[] = $pdf->getStringHeight($width, $Cess);
+    $heights[] = $pdf->getStringHeight($width, round($value, 1));
+    $heights[] = $pdf->getStringHeight($width, $ITC);
+    $heights[] = $pdf->getStringHeight($width, round($taxValue / 2, 1));
+    $heights[] = $pdf->getStringHeight($width, $compressedStateCode);
+
+    // Find the maximum height based on content or default height
+    $maxHeight = max($defaultHeight, max($heights));
+
+    // Calculate the available space on the page considering the footer
+    $availableHeight = $pdf->getPageHeight() - $pdf->getBreakMargin() - $footerHeight;
+
+    // Ensure the remaining space on the page can accommodate the row height
+    if ($pdf->GetY() + $maxHeight > $availableHeight) {
+        $pdf->AddPage(); // Add a new page if there's not enough space
+    }
+
+    // Use MultiCell for wrapping and adjust Y position
+    $startX = $pdf->GetX();
+    $startY = $pdf->GetY();
+
+    $pdf->MultiCell($width, $maxHeight, $gstin, 1, 'C', false, 0, $startX, $startY);
+    $pdf->MultiCell($width, $maxHeight, $buyerName, 1, 'C', false, 0, $startX + $width, $startY);
+    $pdf->MultiCell($width, $maxHeight, $InvoiceNumber, 1, 'C', false, 0, $startX + 2 * $width, $startY);
+    $pdf->MultiCell($width, $maxHeight, $formattedDate, 1, 'C', false, 0, $startX + 3 * $width, $startY);
+    $pdf->MultiCell($width, $maxHeight, round($taxPlusValue, 1), 1, 'C', false, 0, $startX + 4 * $width, $startY);
+    $pdf->MultiCell($width, $maxHeight, $GST, 1, 'C', false, 0, $startX + 5 * $width, $startY);
+    $pdf->MultiCell($width, $maxHeight, $Cess, 1, 'C', false, 0, $startX + 6 * $width, $startY);
+    $pdf->MultiCell($width, $maxHeight, round($value, 1), 1, 'C', false, 0, $startX + 7 * $width, $startY);
+    $pdf->MultiCell($width, $maxHeight, $ITC, 1, 'C', false, 0, $startX + 8 * $width, $startY);
+    $pdf->MultiCell($width, $maxHeight, round($taxValue / 2, 1), 1, 'C', false, 0, $startX + 9 * $width, $startY);
+    $pdf->MultiCell($width, $maxHeight, round($taxValue / 2, 1), 1, 'C', false, 0, $startX + 10 * $width, $startY);
+    $pdf->MultiCell($width, $maxHeight, $Cess, 1, 'C', false, 0, $startX + 11 * $width, $startY);
+    $pdf->MultiCell(0, $maxHeight, $compressedStateCode, 1, 'C', false, 0, $startX + 12 * $width, $startY);
+
+    // Move to the next row
+    $pdf->Ln($maxHeight);
+
+    // Update totals
+    $TtaxPlusValue += $taxPlusValue;
+    $Tvalue += $value;
+    $TITC += $ITC;
+    $TtaxValue += $taxValue / 2;
+    $TCess += $Cess;
+}
+
+// $pdf->SetY($nextYAxis);
+
+$pdf->Cell($width*4,7,'Total',1,0,'L');
+$pdf->Cell($width,7,round($TtaxPlusValue, 1),1,0,'C');
+$pdf->Cell($width,7,'',1,0,'C');
+$pdf->Cell($width,7,$TCess,1,0,'C');
+$pdf->Cell($width,7,round($Tvalue, 1),1,0,'C');
+$pdf->Cell($width,7,$TITC,1,0,'C');
+$pdf->Cell($width,7,round($TtaxValue, 1),1,0,'C');
+$pdf->Cell($width,7,round($TtaxValue, 1),1,0,'C');
+$pdf->Cell($width,7,round($TCess, 1),1,0,'C');
+$pdf->Cell(0,7,'',1,1,'C');
+
+// $nextYAxis+=14;
+
+// $pdf->SetY($nextYAxis);
+$pdf->SetFont('', 'B', 10);
+$pdf->Cell(0,7,''.$pdf->$title.' Return','B',1,'C');
+
+$pdf->SetFont('', '', 6);
+
+$width = $pdf->GetPageWidth() / 14 - 2;
+
+$pdf->Cell($width,7*2,'GSTIN/',1,0,'C');
+$pdf->Cell($width*6,7,'Invoice details',1,0,'C');
+$pdf->Cell($width,7*2,'Rate',1,0,'C');
+$pdf->Cell($width,7*2,'Cess',1,0,'C');
+$pdf->Cell($width,7*2,'Taxable',1,0,'C');
+$pdf->Cell($width*4,7,'Amount',1,0,'C');
+$pdf->Cell(0,7*2,'Place of',1,0,'C');
+$pdf->Cell($width,7,'',0,1,'C');
+
+// $pdf->SetY($nextYAxis+14);
+
+$pdf->Cell($width,7,'UIN',0,0,'C');
+$pdf->Cell($width,7,'Name',1,0,'C');
+$pdf->Cell($width,7,'R No.',1,0,'C');
+$pdf->Cell($width,7,'R Date',1,0,'C');
+$pdf->Cell($width,7,'Inv No.',1,0,'C');
+$pdf->Cell($width,7,'Date',1,0,'C');
+$pdf->Cell($width,7,'Value',1,0,'C');
+$pdf->Cell($width,7,'',0,0,'C');
+$pdf->Cell($width,7,'Rate',0,0,'C');
+$pdf->Cell($width,7,'value',0,0,'C');
+$pdf->Cell($width,7,'ITC',1,0,'C');
+$pdf->Cell($width,7,'CGST',1,0,'C');
+$pdf->Cell($width,7,'SGST',1,0,'C');
+$pdf->Cell($width,7,'Cess',1,0,'C');
+$pdf->Cell(0,7,'Supply',0,1,'C');
+
+
+// Fetch sell return data
+$returnSql = "SELECT * FROM {$tableName}return";
+$returnResult = $conn->query($returnSql);
+while ($returnRow = $returnResult->fetch_assoc()) {
+    // Data retrieval and calculations
+    $buyerName = $returnRow['partiesName'];
+    $gstin = $returnRow['partiesGSTIN'];
+    $dateTime = $returnRow['dateTime'];
+    $dateObject = DateTime::createFromFormat('Y.m.d-H:i:s', $dateTime);
+    $formattedDate = $dateObject ? $dateObject->format('Y.m.d') : 'Invalid Date';
+
+    $stateNameCode = $returnRow['placeOfSupply'];
+    preg_match('/(\d+)$/', $stateNameCode, $matches);
+    $compressedStateCode = !empty($matches) ? 'c-' . $matches[1] : 'c-unknown';
+
+    $returnNumberFormat = $tableName . 'ReturnNo';
+    $returnNumber = $returnRow[$returnNumberFormat];
+    $goodsAmount = isset($returnRow['totalAmount']) ? floatval($returnRow['totalAmount']) : 0.0;
+    $goodsQuantity = isset($returnRow['quantity']) ? intval($returnRow['quantity']) : 0;
+    $GST = isset($returnRow['gst']) ? floatval($returnRow['gst']) : 0.0;
+    $Cess = isset($returnRow['cess']) ? floatval($returnRow['cess']) : 0.0;
+    $ITC = isset($returnRow['itc']) ? floatval($returnRow['itc']) : 0.0;
+
+    $value = $goodsAmount * $goodsQuantity;
+    $taxValue = $value * ($GST / 100);
+    $taxPlusValue = $value + $taxValue;
+
+    // Calculate heights of each MultiCell based on content
+    $heights = [];
+    // $width = 20; // Adjust as needed
+
+    $heights[] = $pdf->getStringHeight($width, $gstin);
+    $heights[] = $pdf->getStringHeight($width, $buyerName);
+    $heights[] = $pdf->getStringHeight($width, $returnNumber);
+    $heights[] = $pdf->getStringHeight($width, $formattedDate);
+    $heights[] = $pdf->getStringHeight($width, $invoiceNumber);
+    $heights[] = $pdf->getStringHeight($width, round($returnRow['totalAmount'], 1));
+    $heights[] = $pdf->getStringHeight($width, $returnRow['gst']);
+    $heights[] = $pdf->getStringHeight($width, $Cess);
+    $heights[] = $pdf->getStringHeight($width, round($goodsAmount, 1));
+    $heights[] = $pdf->getStringHeight($width, $ITC);
+    $heights[] = $pdf->getStringHeight($width, round($taxValue / 2, 1));
+    $heights[] = $pdf->getStringHeight($width, $compressedStateCode);
+
+    $maxHeight = max($defaultHeight, max($heights));
+
+    // Calculate available height
+    $availableHeight = $pdf->getPageHeight() - $pdf->getBreakMargin() - $footerHeight;
+
+    // Ensure remaining space on the page can accommodate the row height
+    if ($pdf->GetY() + $maxHeight > $availableHeight) {
+        $pdf->AddPage(); // Add a new page if there's not enough space
+    }
+
+    // Start drawing cells
+    $startX = $pdf->GetX();
+    $startY = $pdf->GetY();
+
+    $pdf->MultiCell($width, $maxHeight, $gstin, 1, 'C', false, 0, $startX, $startY);
+    $pdf->MultiCell($width, $maxHeight, $buyerName, 1, 'C', false, 0, $startX + $width, $startY);
+    $pdf->MultiCell($width, $maxHeight, $returnNumber, 1, 'C', false, 0, $startX + 2 * $width, $startY);
+    $pdf->MultiCell($width, $maxHeight, $formattedDate, 1, 'C', false, 0, $startX + 3 * $width, $startY);
+    $pdf->MultiCell($width, $maxHeight, $returnRow['invoiceNumber'], 1, 'C', false, 0, $startX + 4 * $width, $startY);
+    $pdf->MultiCell($width, $maxHeight, $formattedDate, 1, 'C', false, 0, $startX + 5 * $width, $startY);
+    $pdf->MultiCell($width, $maxHeight, round($returnRow['totalAmount'], 1), 1, 'C', false, 0, $startX + 6 * $width, $startY);
+    $pdf->MultiCell($width, $maxHeight, $returnRow['gst'], 1, 'C', false, 0, $startX + 7 * $width, $startY);
+    $pdf->MultiCell($width, $maxHeight, $Cess, 1, 'C', false, 0, $startX + 8 * $width, $startY);
+    $pdf->MultiCell($width, $maxHeight, round($goodsAmount, 1), 1, 'C', false, 0, $startX + 9 * $width, $startY);
+    $pdf->MultiCell($width, $maxHeight, $ITC, 1, 'C', false, 0, $startX + 10 * $width, $startY);
+    $pdf->MultiCell($width, $maxHeight, round($taxValue / 2, 1), 1, 'C', false, 0, $startX + 11 * $width, $startY);
+    $pdf->MultiCell($width, $maxHeight, round($taxValue / 2, 1), 1, 'C', false, 0, $startX + 12 * $width, $startY);
+    $pdf->MultiCell($width, $maxHeight, $Cess, 1, 'C', false, 0, $startX + 13 * $width, $startY);
+    $pdf->MultiCell(0, $maxHeight, $compressedStateCode, 1, 'C', false, 1, $startX + 14 * $width, $startY);
+
+    // Accumulate totals
+    $totalAmountTotal += $returnRow['totalAmount'];
+    $goodsAmountTotal += $goodsAmount;
+    $cgstTotal += $taxValue / 2;
+    $sgstTotal += $taxValue / 2;
+    $cessTotal += $Cess;
+    $finalTotal += $taxPlusValue;
+}
+
+$pdf->Cell($width*6,7,'Total',1,0,'C');
+$pdf->Cell($width,7,round($totalAmountTotal,1),1,0,'C');
+$pdf->Cell($width,7,'',1,0,'C');
+$pdf->Cell($width,7,'0.0',1,0,'C');
+$pdf->Cell($width,7,round($goodsAmountTotal,1),1,0,'C');
+$pdf->Cell($width,7,'0.0',1,0,'C');
+$pdf->Cell($width,7,round($cgstTotal,1),1,0,'C');
+$pdf->Cell($width,7,round($sgstTotal,1),1,0,'C');
+$pdf->Cell($width,7,$cessTotal,1,0,'C');
+$pdf->Cell(0,7,'',1,1,'C');
+
+
+
+
+
+
+// End output buffering and clean up
+ob_end_clean();
+
+// Output PDF document (force download)
+$pdf->Output(''.$nameReport.'_Report_' . date('Y.m.d') . '.pdf', 'I');
+
+// Restore error reporting
+error_reporting(E_ALL);
 ?>
-<!doctype html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>A S ENTERPRISE</title>
-    <script src="https://kit.fontawesome.com/e7678863ec.js" crossorigin="anonymous"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/style.css">
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
-    <!-- <style>*{border:1px solid red;}</style> -->
-</head>
-
-<body>
-    <div class="mainBody row  g-0">
-        <main class="d-flex flex-nowrap sidebar col-auto">
-            <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark " style="width:280px; height:100vh;">
-                <a href="./index.php"
-                    class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                    <img src="icon.png" class="img-thumbnail mx-2" alt="..." style="width: 50px; height:50px;">
-                    <span class="fs-5">A S ENTERPRISE</span>
-                </a>
-                <hr>
-                <ul class="nav nav-pills mb-auto d-flex flex-column list-unstyled ps-0">
-                    <li class="nav-item">
-                        <a href="./sell.php" class="nav-link d-flex align-items-center my-1  p-2 text-light"
-                            aria-current="page"><i
-                                class="fa-solid fa-file-invoice-dollar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
-                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">SELL</span></a>
-                    </li>
-                    <li>
-                        <a href="./add.php" class="nav-link d-flex align-items-center my-1  p-2 text-light"><i
-                                class=" fa-solid fa-truck-ramp-box me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
-                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">ADD PRODUCTS</span></a>
-                    </li>
-                    <li>
-                        <a href="./purchase.php" class="nav-link d-flex align-items-center my-1  p-2 text-light"><i
-                                class="fa-solid fa-cart-shopping me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
-                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">ADD Purchase</span></a>
-                    </li>
-                    <li>
-                        <a href="./items.php" class="nav-link d-flex align-items-center my-1  p-2 text-light"><i
-                                class=" fa-solid fa-shapes me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
-                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">Items</span></a>
-                    </li>
-                    <li>
-                        <a href="./parties.php" class="nav-link d-flex align-items-center my-1  p-2 text-light"><i
-                                class=" fa-solid fa-people-group me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
-                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">Parties</span></a>
-                    </li>
-                    <li>
-                        <a href="#" class="active nav-link d-flex align-items-center my-1  p-2 text-light" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="false"><i
-                                class="bg-dark fa-solid fa-plus me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center"
-                                style=" height: 30px;width:30px"></i> <span class="d-none d-lg-block">Reports</span></a>
-                        <div class="collapse" id="home-collapse" style="">
-                        <ul class="btn-toggle-nav list-unstyled fw-normal ms-5 pb-1 small">
-                            <li><a href="./sellReport.php" class="fs-7 nav-link d-flex align-items-center p-2 text-light"><i class="fa-solid fa-chart-bar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center" style=" height: 20px;width:20px"></i> <span class="d-none d-lg-block">Sell Report</span></a></li>
-                            <li><a href="./purchaseReport.php" class="fs-7 nav-link d-flex align-items-center p-2 text-light"><i class="fa-solid fa-chart-bar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center" style=" height: 20px;width:20px"></i> <span class="d-none d-lg-block">Purchase Report</span></a></li>
-                            <li><a href="./gstReport.php" class="active fs-7 nav-link d-flex align-items-center p-2 text-light"><i class="bg-dark fa-solid fa-chart-bar me-2 bg-primary p-1 rounded-circle d-flex align-items-center justify-content-center" style=" height: 20px;width:20px"></i> <span class="d-none d-lg-block">GST Report</span></a></li>
-                        </ul>
-                        </div>
-                    </li>
-
-                </ul>
-                <hr>
-                <div class="dropdown">
-                    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="logo.png" alt="" width="42" height="32" class="rounded-circle me-2">
-                        <span class="fs-8">Developer</span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-                        <li><a class="dropdown-item" href="#">Contact Us - +91-7319589678</a></li>
-                        <li><a class="dropdown-item" href="#">Email - abhijitdey3322@gmail.com</a></li>
-                    </ul>
-                </div>
-            </div>
-        </main>
-        <div class="col d-flex flex-column">
-            <nav class="navbar navbar-expand-lg bg-secondary align-self-stretch">
-                <div class="container-fluid">
-                    <a class="navbar-brand d-flex align-items-center justify-content-center"
-                        style="height:50px; width:50px; text-align:center;padding:0;" href="#">
-                        <?php 
-                            if (mysqli_num_rows($result) == 1) {
-                                $user = mysqli_fetch_assoc($result);
-                                if ($user['status'] === 'active') {echo '<img src="admin.png" class=" border rounded-circle"alt="Bootstrap" style="width: 100%; height: 100%; object-fit: contain;">';}
-                                else{echo '<img src="accountIcon.png" class=" border rounded-circle"alt="Bootstrap" width="30" height="30">';}
-                            }
-                        ?>
-                    </a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
-                        aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarText">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li class="nav-item">
-                                <a class="nav-link text-light" href="#">
-                                    <?php if ($user['status'] === 'active') {echo $user['username'];}else{echo 'Admin Name';}?>
-                                </a>
-                            </li>
-                        </ul>
-                        <?php 
-                            // Check if user status is inactive
-                            if ($user['status'] === 'inactive') {
-                                echo '<a class="navbar-brand text-light" style="text-align:center;" href="#" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Login <i class="fa-solid fa-right-from-bracket rotate-180"></i></a>';
-                            } else {
-                                echo '<a class="navbar-brand text-light" style="text-align:center;" href="backend/loginOwner.php?action=logout">Logout <i class="fa-solid fa-right-from-bracket"></i></a>';
-                            }
-                        ?>
-                    </div>
-                </div>
-            </nav>
-            <div class="container-fluid flex-grow-1" id="chnageSection">
-                <div class="d-flex justify-content-center align-items-center flex-column text-center p-0"
-                    style="width:100%;height:100%">
-                    
-                    <!-- Modal -->
-                    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"
-                        tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header bg-primary ">
-                                    <h1 class="modal-title fs-5 text-light" id="exampleModalCenterTitle">Owner Login
-                                    </h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form action="backend/loginOwner.php" method="POST">
-                                        <div class="mb-3 text-start">
-                                            <label for="exampleInputEmail1"
-                                                class="form-label text-custom">Username</label>
-                                            <input type="text" class="form-control border border-primary"
-                                                id="exampleInputEmail1" name="username" aria-describedby="emailHelp">
-                                        </div>
-                                        <div class="mb-3 text-start">
-                                            <label for="exampleInputPassword1"
-                                                class="form-label text-custom">Password</label>
-                                            <input type="password" class="form-control border border-primary"
-                                                id="exampleInputPassword1" name="password">
-                                        </div>
-                                        <div class="mb-3 text-start form-check">
-                                            <input type="checkbox" class="form-check-input border border-primary"
-                                                id="exampleCheck1">
-                                            <label class="form-check-label text-custom" for="exampleCheck1">Check me
-                                                out</label>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary"
-                                            style="width:50%;border-radius:50px;">Login</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
-
-</body>
-
-</html>
